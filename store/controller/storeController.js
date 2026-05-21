@@ -16,12 +16,6 @@ exports.getAbout =(req, res, next) => {
     })
 }
 
-exports.getServices = (req, res, next) => {
-    res.render('store/services', {
-        pageTitle : 'Service Page',
-    })
-}
-
 exports.getBlog = (req, res, next) => {
     res.render('store/blog', {
         pageTitle : 'Blog Page',
@@ -31,5 +25,11 @@ exports.getBlog = (req, res, next) => {
 exports.getContact = (req, res, next) => {
     res.render('store/contact', {
         pageTitle : 'Contact Page',
+    })
+}
+
+exports.getLogin = (req, res, next) => {
+    res.render('auth/login', {
+        pageTitle : 'Login Page',
     })
 }
