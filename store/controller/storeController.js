@@ -28,8 +28,14 @@ exports.getContact = (req, res, next) => {
     })
 }
 
-exports.getLogin = (req, res, next) => {
-    res.render('auth/login', {
-        pageTitle : 'Login Page',
+exports.getCart = (req, res, next) => {
+    res.render('store/cart', {
+        pageTitle : 'Cart ',
+    })
+}
+
+exports.getCheckout = (req, res, next) => {
+    res.render('store/checkout', {
+        pageTitle : 'Checkout Page',
     })
 }
