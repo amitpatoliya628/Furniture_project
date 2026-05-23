@@ -18,7 +18,7 @@ exports.postAddProduct = (req, res, next) => {
         productImage,
     });
     product.save().then(result => {
-        console.log('product inserted');
+        console.log('product Added');
     }).catch(err => {
         console.log('error while inserting product', err);
     });

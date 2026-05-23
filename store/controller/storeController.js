@@ -39,3 +39,9 @@ exports.getCheckout = (req, res, next) => {
         pageTitle : 'Checkout Page',
     })
 }
+
+exports.getThankyou = (req, res, next) => {
+    res.render('store/thankyou', {
+        pageTitle : 'Thankyou Page',
+    })
+}
