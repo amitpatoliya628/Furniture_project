@@ -14,7 +14,7 @@ storeRouter.get('/checkout', storeController.getCheckout);
 storeRouter.get('/thankyou', storeController.getThankyou);
 
 
-storeRouter.get('/shop/:category', storeController.getCategoryProducts);
+storeRouter.get('/category/:category', storeController.getCategoryProducts);
 
 
 module.exports = storeRouter;

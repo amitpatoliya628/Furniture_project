@@ -56,10 +56,12 @@ exports.getThankyou = (req, res, next) => {
 exports.getCategoryProducts = (req,res, next) => {
     const category = req.params.category;
     console.log(category);
-    Products.find({ productCategory : category }).then( products => {
-        res.render('store/shop', {
-            products : products,
-            pageTitle : 'Shop Page',
+    
+    Products.find({ category : category }).then( products => {
+        res.render('store/category', {
+            category,
+            products,
+            pageTitle : 'Category Page',
         });
     } )
 }
