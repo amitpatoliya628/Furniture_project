@@ -1,3 +1,5 @@
+const Products = require('../model/product');
+
 exports.getindex = (req, res, next) => {
     res.render('store/index',{
         pageTitle : 'Home Page',
@@ -5,9 +7,12 @@ exports.getindex = (req, res, next) => {
 }
 
 exports.getShop = (req, res, next) => {
-    res.render('store/shop', {
-        pageTitle : 'Shop Page',
-    });
+    Products.find().then( products => {
+        res.render('store/shop', {
+            products : products,
+            pageTitle : 'Shop Page',
+        });
+    } )
 }
 
 exports.getAbout =(req, res, next) => {
@@ -44,4 +49,17 @@ exports.getThankyou = (req, res, next) => {
     res.render('store/thankyou', {
         pageTitle : 'Thankyou Page',
     })
+}
+
+
+
+exports.getCategoryProducts = (req,res, next) => {
+    const category = req.params.category;
+    console.log(category);
+    Products.find({ productCategory : category }).then( products => {
+        res.render('store/shop', {
+            products : products,
+            pageTitle : 'Shop Page',
+        });
+    } )
 }

@@ -20,8 +20,8 @@ app.use(express.urlencoded({extended :true}));
 app.use(express.json());
 
 app.use(storeRouter);
+app.use('/host',hostRouter);
 app.use(authRouter);
-app.use(hostRouter);
 
 app.use(express.static(path.join(rootdir, 'public')));
 
