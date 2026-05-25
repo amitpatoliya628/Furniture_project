@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+
+	<%- include('../partials/head'); %>
+
+	<body>
+
+		<!-- Start Header/Navigation -->
+		<%- include('../partials/header') %>
+		<!-- End Header/Navigation -->
+
+		
+		<!-- Start Hero Section -->
+			<div class="hero">
+				<div class="container">
+					<div class="row justify-content-between">
+						<div class="col-lg-5">
+							<div class="intro-excerpt">
+								<h1>Product List</h1>
+							</div>
+						</div>
+						<div class="col-lg-7">
+							
+						</div>
+					</div>
+				</div>
+			</div>
+		<!-- End Hero Section -->
+        
+        
+
+
+	<!-- Start Product Details Section -->
+	<div class="untree_co-section product-section-before-footer">
+		<div class="container">
+
+			<div class="row">
+				
+				<!-- Product Image -->
+				<div class="col-lg-6 mb-5">
+					<div class="product-image-wrapper p-4 shadow-sm rounded bg-white text-center">
+						<img 
+							src="/images/product-2.png"
+							class="img-fluid rounded"
+							alt="<%= product.name %>"
+							style="height: 500px; width: 100%; object-fit: cover;"
+						>
+					</div>
+				</div>
+
+				<!-- Product Details -->
+				<div class="col-lg-6">
+
+					<div class="product-details">
+
+						<span class="badge bg-success mb-3 px-3 py-2">
+							In Stock
+						</span>
+
+						<h2 class="mb-3 fw-bold">
+							<%= product.name %>
+						</h2>
+
+						<h3 class="text-primary mb-4">
+							₹ <%= product.price %>
+						</h3>
+
+						<p class="mb-4 text-muted" style="line-height: 1.9;">
+							<%= product.description %>
+						</p>
+
+						<div class="mb-4">
+							<h5 class="mb-3">Features</h5>
+
+							<ul class="list-unstyled">
+								<li class="mb-2">✔ Premium Quality Material</li>
+								<li class="mb-2">✔ Modern Elegant Design</li>
+								<li class="mb-2">✔ Comfortable & Durable</li>
+								<li class="mb-2">✔ Easy Maintenance</li>
+							</ul>
+						</div>
+
+						<!-- Quantity -->
+						<div class="d-flex align-items-center mb-4 gap-3">
+							<label class="fw-bold mb-0">Quantity:</label>
+							<div class="d-flex align-items-center border rounded" style="width: fit-content;">
+								<button class="btn btn-sm border-0 py-2 px-3" type="button" id="decreaseQty" style="background: #000000; cursor: pointer;">
+									<i class="bi bi-dash-lg">−</i>
+								</button>
+								<input 
+									type="number" 
+									class="form-control form-control-sm border-0 text-center" 
+									id="quantity" 
+									name="quantity"
+									value="1" 
+									min="1"
+									max="999"
+									style="width: 60px; font-weight: bold;"
+								>
+								<button class="btn btn-sm border-0 py-2 px-3" type="button" id="increaseQty" style="background: #000000; cursor: pointer;">
+									<i class="bi bi-plus-lg">+</i>
+								</button>
+							</div>
+						</div>
+
+						<!-- Buttons -->
+						<div class="d-flex gap-3">
+
+							<form action="/cart/add-to-cart" method="POST">
+								<input 
+									type="hidden" 
+									name="productId" 
+									value="<%= product._id %>"
+								>
+
+								<button type="submit" class="btn btn-black btn-lg px-4">
+									Delete
+								</button>
+							</form>
+
+							<button class="btn btn-outline-dark btn-lg px-4">
+								Edit
+							</button>
+
+						</div>
+
+					</div>
+
+				</div>
+
+			</div>
+
+		</div>
+	</div>
+	<!-- End Product Details Section -->
+
+		<!-- Start Footer Section -->
+		<%- include('../partials/footer') %>
+		<!-- End Footer Section -->	
+
+
+		<script src="/js/bootstrap.bundle.min.js"></script>
+		<script src="/js/tiny-slider.js"></script>
+		<script src="/js/custom.js"></script>
+
+		<script>
+			// Quantity controls
+			document.getElementById('increaseQty').addEventListener('click', function() {
+				const quantityInput = document.getElementById('quantity');
+				quantityInput.value = parseInt(quantityInput.value) + 1;
+			});
+
+			document.getElementById('decreaseQty').addEventListener('click', function() {
+				const quantityInput = document.getElementById('quantity');
+				if (parseInt(quantityInput.value) > 1) {
+					quantityInput.value = parseInt(quantityInput.value) - 1;
+				}
+			});
+		</script>
+	</body>
+
+</html>
