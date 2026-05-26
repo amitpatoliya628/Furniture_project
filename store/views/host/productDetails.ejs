@@ -71,7 +71,7 @@
 
 						<div class="mb-4">
 							<h5 class="mb-3">Features</h5>
-
+							
 							<ul class="list-unstyled">
 								<li class="mb-2">✔ Premium Quality Material</li>
 								<li class="mb-2">✔ Modern Elegant Design</li>
@@ -82,54 +82,33 @@
 
 						<!-- Quantity -->
 						<div class="d-flex align-items-center mb-4 gap-3">
-							<label class="fw-bold mb-0">Quantity:</label>
+							<label class="fw-bold mb-0">Stock:</label>
 							<div class="d-flex align-items-center border rounded" style="width: fit-content;">
-								<button class="btn btn-sm border-0 py-2 px-3" type="button" id="decreaseQty" style="background: #000000; cursor: pointer;">
-									<i class="bi bi-dash-lg">−</i>
-								</button>
-								<input 
-									type="number" 
-									class="form-control form-control-sm border-0 text-center" 
-									id="quantity" 
-									name="quantity"
-									value="1" 
-									min="1"
-									max="999"
-									style="width: 60px; font-weight: bold;"
-								>
-								<button class="btn btn-sm border-0 py-2 px-3" type="button" id="increaseQty" style="background: #000000; cursor: pointer;">
-									<i class="bi bi-plus-lg">+</i>
-								</button>
+								<span class="px-3 py-2"><%= product.stock %></span>
 							</div>
 						</div>
 
 						<!-- Buttons -->
 						<div class="d-flex gap-3">
 
-							<form action="/cart/add-to-cart" method="POST">
-								<input 
-									type="hidden" 
-									name="productId" 
-									value="<%= product._id %>"
-								>
+							<a href="/host/editProduct/<%= product._id %>">
+								<button type="submit" class="btn btn-outline-dark btn-lg px-4">
+									Edit
+								</button>
+							</a>
+							
+							<form action="/host/productDelete" method="POST">
+								<input type="hidden" name="productId" value="<%= product._id %>">
 
 								<button type="submit" class="btn btn-black btn-lg px-4">
 									Delete
 								</button>
 							</form>
 
-							<button class="btn btn-outline-dark btn-lg px-4">
-								Edit
-							</button>
-
 						</div>
-
 					</div>
-
 				</div>
-
 			</div>
-
 		</div>
 	</div>
 	<!-- End Product Details Section -->
