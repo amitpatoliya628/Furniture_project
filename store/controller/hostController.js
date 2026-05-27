@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 exports.getAddProduct = (req, res, next) => {
     res.render('host/addProduct', {
         pageTitle : 'Add Product',
+        isLoggedIn : req.isLoggedIn,
     })
 }
 
@@ -31,6 +32,7 @@ exports.getProductList = (req, res, next) => {
         res.render('host/productList', {
             pageTitle : 'Product List',
             products : products,
+            isLoggedIn : req.isLoggedIn,
         })
     })
 }
@@ -52,11 +54,13 @@ exports.getProductDetails = (req, res, next) => {
         res.render('host/productDetails', {
             pageTitle : 'Product Details',
             product : product,
+            isLoggedIn : req.isLoggedIn,
         })
     }).catch(err => {
         console.log('error while fetching product details', err);
         res.status(500).render('store/404', {
             pageTitle: 'Error',
+            isLoggedIn : req.isLoggedIn,
         });
     })
 }
@@ -71,6 +75,7 @@ exports.getEditProduct = (req, res, next) => {
         res.render('host/editProduct', {
             pageTitle: 'Edit Product',
             product,
+            isLoggedIn : req.isLoggedIn,
         });
     })
 
@@ -98,6 +103,7 @@ exports.postEditProduct = (req, res, next) => {
         res.render('host/productDetails', {
             pageTitle : 'Product Details',
             product,
+            isLoggedIn : req.isLoggedIn,
         })
     }).catch(err => {
         console.log('error while finding product for update', err);

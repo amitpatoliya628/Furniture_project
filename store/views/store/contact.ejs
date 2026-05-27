@@ -83,29 +83,36 @@
                 </div>
               </div>
 
-              <form>
+              <% if (query.contactSuccess) { %>
+								<div class="alert alert-success alert-dismissible fade show" role="alert">
+									Message send successfully!
+									<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+								</div>
+							<% } %>
+
+              <form action="/contactMessage" method="post">
                 <div class="row">
                   <div class="col-6">
                     <div class="form-group">
                       <label class="text-black" for="fname">First name</label>
-                      <input type="text" class="form-control" id="fname">
+                      <input type="text" class="form-control" name="fname" placeholder="Your first name" required>
                     </div>
                   </div>
                   <div class="col-6">
                     <div class="form-group">
                       <label class="text-black" for="lname">Last name</label>
-                      <input type="text" class="form-control" id="lname">
+                      <input type="text" class="form-control" name="lname" placeholder="Your last name" required>
                     </div>
                   </div>
                 </div>
                 <div class="form-group">
                   <label class="text-black" for="email">Email address</label>
-                  <input type="email" class="form-control" id="email">
+                  <input type="email" class="form-control" name="email" placeholder="Your email address" required>
                 </div>
 
                 <div class="form-group mb-5">
                   <label class="text-black" for="message">Message</label>
-                  <textarea name="" class="form-control" id="message" cols="30" rows="5"></textarea>
+                  <textarea name="message" class="form-control" id="message" cols="30" rows="5" placeholder="Your message" required></textarea>
                 </div>
 
                 <button type="submit" class="btn btn-primary-hover-outline">Send Message</button>

@@ -16,5 +16,8 @@ storeRouter.get('/thankyou', storeController.getThankyou);
 
 storeRouter.get('/category/:category', storeController.getCategoryProducts);
 
+storeRouter.post('/subscribe', storeController.postSubscribe);
+storeRouter.post('/contactMessage', storeController.postContactMessage);
+
 
 module.exports = storeRouter;
