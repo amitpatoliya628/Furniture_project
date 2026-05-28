@@ -50,6 +50,7 @@ exports.getProductDetails = (req, res, next) => {
     Product.findById(productId).then(product => {
         if(!product){
             console.log('Product not found');
+            res.redirect('/shop');
         }
         res.render('host/productDetails', {
             pageTitle : 'Product Details',

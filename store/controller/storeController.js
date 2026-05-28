@@ -1,4 +1,5 @@
 const Products = require('../model/product');
+const User = require('../model/user');
 
 const newsLatter = require('../model/newsLatter');
 const contactMessage = require('../model/contactMessage');
@@ -6,7 +7,6 @@ const contactMessage = require('../model/contactMessage');
 exports.getindex = (req, res, next) => {
     res.render('store/index',{
         pageTitle : 'Home Page',
-        pagelink : '/',
         isLoggedIn : req.isLoggedIn,
     });
 }
@@ -16,7 +16,6 @@ exports.getShop = (req, res, next) => {
         res.render('store/shop', {
             products : products,
             pageTitle : 'Shop Page',
-            pagelink : '/shop',
             isLoggedIn : req.isLoggedIn,
         });
     } )
@@ -25,7 +24,6 @@ exports.getShop = (req, res, next) => {
 exports.getAbout =(req, res, next) => {
     res.render('store/about', {
         pageTitle : 'About Page',
-        pagelink : '/about',
         isLoggedIn : req.isLoggedIn,
     })
 }
@@ -33,7 +31,6 @@ exports.getAbout =(req, res, next) => {
 exports.getBlog = (req, res, next) => {
     res.render('store/blog', {
         pageTitle : 'Blog Page',
-        pagelink : '/blog',
         isLoggedIn : req.isLoggedIn,
     })
 }
@@ -41,7 +38,6 @@ exports.getBlog = (req, res, next) => {
 exports.getContact = (req, res, next) => {
     res.render('store/contact', {
         pageTitle : 'Contact Page',
-        pagelink : '/contact',
         isLoggedIn : req.isLoggedIn,
     })
 }
@@ -49,7 +45,6 @@ exports.getContact = (req, res, next) => {
 exports.getCart = (req, res, next) => {
     res.render('store/cart', {
         pageTitle : 'Cart ',
-        pagelink : '/cart',
         isLoggedIn : req.isLoggedIn,
     })
 }
@@ -57,7 +52,6 @@ exports.getCart = (req, res, next) => {
 exports.getCheckout = (req, res, next) => {
     res.render('store/checkout', {
         pageTitle : 'Checkout Page',
-        pagelink : '/checkout',
         isLoggedIn : req.isLoggedIn,
     })
 }
@@ -65,9 +59,49 @@ exports.getCheckout = (req, res, next) => {
 exports.getThankyou = (req, res, next) => {
     res.render('store/thankyou', {
         pageTitle : 'Thankyou Page',
-        pagelink : '/thankyou',
         isLoggedIn : req.isLoggedIn,
     })
+}
+
+exports.getProductDetails = (req, res, next) => {
+    const productId = req.params.productId;
+        
+    Products.findById(productId).then(product => {
+        if(!product){
+            console.log('Product not found');
+            return res.redirect('/shop');
+        }
+        res.render('store/productDetails', {
+            pageTitle : 'Product Details',
+            product : product,
+            isLoggedIn : req.isLoggedIn,
+        })
+    }).catch(err => {
+        console.log('error while fetching product details', err);
+        res.status(500).render('store/404', {
+            pageTitle: 'Error',
+            isLoggedIn : req.isLoggedIn,
+        });
+    })
+}
+
+exports.getAddToCart = async (req, res, next) => {
+    const productId = req.params.productId;
+    const userId = req.user._id;
+
+    const user = await User.findById(userId);
+
+    if(user.cart.includes(productId)) { 
+        console.log('Already Added to Cart');
+        return res.redirect('/cart');
+    } else {
+        user.cart.push(productId);
+        await user.save();
+    }
+
+    console.log('user is login');
+    res.redirect('/cart');
+
 }
 
 exports.getCategoryProducts = (req,res, next) => {
@@ -79,7 +113,6 @@ exports.getCategoryProducts = (req,res, next) => {
             category,
             products,
             pageTitle : 'Category Page',
-            pagelink : `/category/${category}`,
             isLoggedIn : req.isLoggedIn,
         });
     } )

@@ -23,6 +23,14 @@ const userSchema =mongoose.Schema({
         type :String,
         required : [true, 'Password must be Filled'],
     },
+    cart : [{
+        type : mongoose.Schema.Types.ObjectId,
+        ref : 'product',
+    }],
+    wishlist : [{
+        type : mongoose.Schema.Types.ObjectId,
+        ref : 'product',
+    }],
 
 });
 

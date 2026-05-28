@@ -35,13 +35,15 @@ const store = new MongoDBStore({
 
 app.use(session({
     secret : 'furni.',
-    resave : false,
-    saveUninitialized : true,
+    resave : true,
+    saveUninitialized : false,
     store,
+    cookie: { maxAge: 24 * 60 * 60 * 1000 }, // 24 hours
 }));
 
 app.use( (req, res, next) => {
     req.isLoggedIn = req.session.isLoggedIn;
+    req.user = req.session.user;
     next();
 });
 

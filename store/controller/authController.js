@@ -5,20 +5,61 @@ const bcrypt = require('bcryptjs')
 exports.getLogin = (req, res, next) => {
     res.render('auth/login', {
         pageTitle : 'Login Page',
-        pagelink : '/login',
         isLoggedIn : false,
+        errors : null,
+        oldInput : null,
     })
 }
 
-exports.postLogin = (req, res, next) => {
+exports.postLogin = async (req, res, next) => {
+    const { email, password } = req.body;
+
+    const user = await User.findOne({ email });
+    if(!user) {
+        return res.status(422).render('/login', {
+            pageTitle: 'Login Page',
+            isLoggedIn: false,
+            errors: ['User does not exist'],
+            oldInput: { email },
+            user: {},
+        });
+    }
+
+    const validPassword = await bcrypt.compare(password, user.password);
+
+    if(!validPassword) { 
+        return res.status(422).render('/login', {
+            pageTitle : 'LoginPage',
+            isLoggedIn : false,
+            errors : ['password is incorrect'],
+            oldInput : { email },
+            user : {},
+        });
+    }
+
     req.session.isLoggedIn = true;
-    res.redirect('/');
+    // Convert Mongoose document to plain object to avoid serialization issues
+    req.session.user = user;
+    
+    return req.session.save((err) => {
+        if (err) {
+            console.error('Session save error:', err);
+            return res.status(500).render('auth/login', {
+                pageTitle: 'Login Page',
+                isLoggedIn: false,
+                errors: ['Error saving session. Please try again.'],
+                oldInput: { email },
+                user: {},
+            });
+        }
+        console.log('Session data:', req.session);
+        res.redirect('/');
+    });
 }
 
 exports.getRegister = (req, res, next) => {
     res.render('auth/register', {
         pageTitle : 'Register User',
-        pagelink : '/register',
         isLoggedIn : false,
         errors : null,
         oldInput : null,
@@ -79,7 +120,6 @@ check('confirmPassword')
     if (!errors.isEmpty()) {
         return res.status(422).render('auth/register', {
             pageTitle: 'Register User',
-            pagelink: '/register',
             isLoggedIn: false,
             errors: errors.array().map(err => err.msg),
             oldInput: {
@@ -107,7 +147,6 @@ check('confirmPassword')
             console.log('error while registering user', err);
             res.render('auth/register', {
                 pageTitle : 'Register User',
-                pagelink : '/register',
                 isLoggedIn : false,
                 oldInput : {
                     fullName,
@@ -117,9 +156,7 @@ check('confirmPassword')
                 }
             })
         });
-
     })
-
 }
 ]
 

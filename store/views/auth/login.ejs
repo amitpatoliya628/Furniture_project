@@ -38,6 +38,12 @@
           <div class="row justify-content-center">
             <div class="col-md-8 col-lg-8 pb-4">
               
+				<% if (errors) { %>
+					<div class="alert alert-danger alert-dismissible fade show" role="alert">
+						<%= errors[0] %>
+						<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+					</div>
+				<% } %>
 
               <form action="/login" method="post">
                 <div class="form-group mb-4">
