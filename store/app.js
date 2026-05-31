@@ -38,7 +38,7 @@ app.use(session({
     resave : true,
     saveUninitialized : false,
     store,
-    cookie: { maxAge: 24 * 60 * 60 * 1000 }, // 24 hours
+    cookie: { maxAge: 2 * 60 * 60 * 1000 }, // 2 hours
 }));
 
 app.use( (req, res, next) => {

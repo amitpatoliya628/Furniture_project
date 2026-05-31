@@ -13,8 +13,9 @@ storeRouter.get('/cart', storeController.getCart);
 storeRouter.get('/checkout', storeController.getCheckout);
 storeRouter.get('/thankyou', storeController.getThankyou);
 
-storeRouter.get('/product/:productId', storeController.getProductDetails);
-storeRouter.get('/addToCart/:productId', storeController.getAddToCart);
+storeRouter.post('/productDetails', storeController.getProductDetails);
+storeRouter.post('/addToCart', storeController.getAddToCart);
+storeRouter.post('/removeFromCart', storeController.removeFromCart);
 storeRouter.get('/category/:category', storeController.getCategoryProducts);
 
 storeRouter.post('/subscribe', storeController.postSubscribe);

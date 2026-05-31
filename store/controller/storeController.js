@@ -42,11 +42,29 @@ exports.getContact = (req, res, next) => {
     })
 }
 
-exports.getCart = (req, res, next) => {
+exports.getCart = async (req, res, next) => {
+    if(!req.user) {
+        console.log('please Login first');
+        return res.redirect('/login');
+    }
+    const userId = req.user._id;
+    const user = await User.findById(userId);
+    if(!user) { 
+        console.log('please Login first');
+        return res.redirect('/login');
+    }
+
+    const cartProducts = user.cart.map( productId => {
+        return Products.findById(productId);
+    });
+
+    const resolvedCartProducts = await Promise.all(cartProducts);
+
     res.render('store/cart', {
-        pageTitle : 'Cart ',
+        pageTitle : 'Cart Page',
         isLoggedIn : req.isLoggedIn,
-    })
+        cartProducts: resolvedCartProducts,
+    });
 }
 
 exports.getCheckout = (req, res, next) => {
@@ -64,7 +82,7 @@ exports.getThankyou = (req, res, next) => {
 }
 
 exports.getProductDetails = (req, res, next) => {
-    const productId = req.params.productId;
+    const productId = req.body.productId;
         
     Products.findById(productId).then(product => {
         if(!product){
@@ -86,7 +104,7 @@ exports.getProductDetails = (req, res, next) => {
 }
 
 exports.getAddToCart = async (req, res, next) => {
-    const productId = req.params.productId;
+    const productId = req.body.productId;
     const userId = req.user._id;
 
     const user = await User.findById(userId);
@@ -99,8 +117,25 @@ exports.getAddToCart = async (req, res, next) => {
         await user.save();
     }
 
-    console.log('user is login');
     res.redirect('/cart');
+
+}
+
+exports.removeFromCart = async (req, res, next) => {
+    console.log(req.body);
+    const productId = req.body.productId;
+    const userId = req.user._id;
+
+    const user = await User.findById(userId);
+
+    if(!user.cart.includes(productId)) {
+        console.log('product not found in cart');
+        return res.redirect('/cart');
+    } else {
+        user.cart.pull(productId);
+        await user.save();
+        return res.redirect('/cart');
+    }
 
 }
 

@@ -69,16 +69,15 @@
 
 						<!-- Buttons -->
 						<div class="d-flex gap-3">
-
-							<a href="/addToCart/<%= product._id %>">
+							<form action="/addToCart" method="POST">
+								<input type="hidden" name="productId" value="<%= product._id %>">
 								<button type="submit" class="btn btn-outline-dark btn-lg px-4">
 									Add To Cart
 								</button>
-							</a>
+							</form>
 							
 							<form action="" method="POST">
 								<input type="hidden" name="productId" value="<%= product._id %>">
-
 								<button type="submit" class="btn btn-black btn-lg px-4">
 									Add To Favourite
 								</button>
