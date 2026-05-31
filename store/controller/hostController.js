@@ -10,7 +10,13 @@ exports.getAddProduct = (req, res, next) => {
 
 exports.postAddProduct = (req, res, next) => {
     console.log(req.body);
-    const { name, price, description, category, stock, image } = req.body;
+    console.log(req.file);
+    if(!req.file){
+        return res.status(400).send('No file uploaded');
+    }
+    const image = req.file.path.replace(/\\/g, '/');
+
+    const { name, price, description, category, stock } = req.body;
     const product = new Product({
         name,
         price,
@@ -85,18 +91,27 @@ exports.getEditProduct = (req, res, next) => {
 exports.postEditProduct = (req, res, next) => {
     const { productId, name, price, description, category, stock, image } = req.body;
     console.log(req.body);
+    
+    const updateData = {
+        name,
+        price,
+        description,
+        category,
+        stock,
+        image
+    }
 
-    Product.findByIdAndUpdate( productId, {
-        name, 
-        price, 
-        description, 
-        category, 
-        stock, 
-        image 
-    }, 
-    { 
-        new: true 
-    }).then( product => {
+    if(req.file){
+        updateData.image = req.file.path.replace(/\\/g, '/');
+    }
+    console.log(updateData.image);
+
+    Product.findByIdAndUpdate( 
+        productId, 
+        updateData, 
+        { new: true }
+    )
+    .then( product => {
         if(!product){
             console.log('product not found!');
         }

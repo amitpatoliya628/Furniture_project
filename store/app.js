@@ -6,6 +6,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);
+const multer = require('multer');
 
 //local module
 const storeRouter = require('./routes/storeRouter');
@@ -17,11 +18,6 @@ const rootdir = require('./utils/pathutils');
 const PATH = "mongodb://mongodb:mongodb01@ac-dghizuz-shard-00-00.8ubrtoz.mongodb.net:27017,ac-dghizuz-shard-00-01.8ubrtoz.mongodb.net:27017,ac-dghizuz-shard-00-02.8ubrtoz.mongodb.net:27017/Furni?ssl=true&replicaSet=atlas-11m6yn-shard-0&authSource=admin&appName=NodeJs"
 
 const app = express();
-
-app.set('view engine', 'ejs');
-app.set('views', 'views');
-app.use(express.urlencoded({extended :true}));
-app.use(express.json());
 
 app.use((req, res, next) => {
     res.locals.query = req.query;
@@ -47,13 +43,52 @@ app.use( (req, res, next) => {
     next();
 });
 
+const randomString = (length) => {
+    const characters = 'abcdefghijklmnopqrstuvwxyz';
+    let result = '';
+    for (let i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return result;
+}
+
+const storage = multer.diskStorage({
+    destination : (req, file, cb) => {
+        cb(null, 'uploads/');
+    },
+    filename : (req, file, cb) => {
+        cb(null, randomString(10) +'-' + file.originalname);
+    }
+});
+
+const fileFilter = (req, file, cb) => {
+    if(file.mimetype === 'image/jpeg' || file.mimetype === 'image/png' || file.mimetype === 'image/jpg'){
+        cb(null, true);
+    } else {
+        cb(new Error('Invalid file type'), false);
+    }
+};
+
+const multerOptions = {
+    storage,
+    fileFilter,
+}
+
+
+
+app.set('view engine', 'ejs');
+app.set('views', 'views');
+app.use(express.urlencoded({extended :true}));
+app.use(multer(multerOptions).single('image'));
+app.use(express.static(path.join(rootdir, 'public')));
+app.use('/uploads', express.static(path.join(rootdir, 'uploads')));
+app.use(express.json());
 
 
 app.use(storeRouter);
 app.use('/host',hostRouter);
 app.use(authRouter);
 
-app.use(express.static(path.join(rootdir, 'public')));
 
 app.use(errorController.error404);
 
