@@ -39,7 +39,7 @@ exports.postLogin = async (req, res, next) => {
 
     req.session.isLoggedIn = true;
     // Convert Mongoose document to plain object to avoid serialization issues
-    req.session.user = user;
+    req.session.user = user.toObject();
     
     return req.session.save((err) => {
         if (err) {

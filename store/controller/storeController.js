@@ -19,7 +19,7 @@ exports.getindex = async (req, res, next) => {
         });
 
     } catch (error) {
-        console.log(err);
+        console.log(error);
     }
     
 }
@@ -86,7 +86,7 @@ exports.getCheckout = async (req, res, next) => {
     const discount = req.body.discount;
     const total = req.body.totalAmount;
     const quantities = req.body.quantities ? JSON.parse(req.body.quantities) : {};
-    userId = req.user._id;
+    const userId = req.user._id;
     const user = await User.findById(userId);
 
     const cartProducts = user.cart.map( productId => {

@@ -126,9 +126,9 @@ exports.postEditProduct = (req, res, next) => {
     });
 }
 
-exports.postDeleteProduct = (req, res, next) => {
+exports.postDeleteProduct = async (req, res, next) => {
     const productId = req.body.productId;
-    Product.findByIdAndDelete(productId).then(product => {
+    await Product.findByIdAndDelete(productId).then(product => {
         if(!product){
             console.log('product not found');
         }
