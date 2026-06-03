@@ -30,7 +30,7 @@
 							<button type="submit" style="background: none;
 								border: none; " class="product-item">
 								<input type="hidden" name="productId" value="<%= product._id %>">
-								<img src="/images/product-2.png" class="img-fluid product-thumbnail">
+								<img src="/<%= product.image %>" class="img-fluid product-thumbnail">
 								<h3 class="product-title"><%= product.name %></h3>
 								<strong class="product-price"><%= product.price %></strong>
 							
@@ -45,15 +45,12 @@
 		    </div>
 		</div>
 
-
 		<!-- Start Footer Section -->
 		<%- include('../partials/footer') %>
 		<!-- End Footer Section -->	
 
-
 		<script src="/js/bootstrap.bundle.min.js"></script>
 		<script src="/js/tiny-slider.js"></script>
-		<script src="/js/custom.js"></script>
 	</body>
 
 </html>

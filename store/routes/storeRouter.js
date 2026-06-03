@@ -10,7 +10,8 @@ storeRouter.get('/about', storeController.getAbout);
 storeRouter.get('/blog', storeController.getBlog);
 storeRouter.get('/contact', storeController.getContact);
 storeRouter.get('/cart', storeController.getCart);
-storeRouter.get('/checkout', storeController.getCheckout);
+storeRouter.post('/checkout', storeController.getCheckout);
+storeRouter.post('/placeOrder', storeController.postPlaceOrder);
 storeRouter.get('/thankyou', storeController.getThankyou);
 
 storeRouter.post('/productDetails', storeController.getProductDetails);

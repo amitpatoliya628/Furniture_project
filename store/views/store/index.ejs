@@ -180,6 +180,35 @@
 		<div class="popular-product">
 			<div class="container">
 				<div class="row">
+					<div class="col-lg-12 mb-4 mx-auto text-center">
+						<h2 class="section-title">Popular Products</h2>
+					</div>
+
+					<% randomProducts.forEach( randomProduct => { %>
+
+					<div class="col-12 col-md-6 col-lg-4 mb-4 mb-lg-0">
+						<form action="/productDetails" method="post">
+							
+							<div class="product-item-sm d-flex">
+								<div class="thumbnail d-flex align-items-center">
+									<button type="submit" class="" style="background: none;
+									border: none;">
+										<img src="/<%= randomProduct.image %>" alt="Image" class="img-fluid" style="justify-content: center;">
+									</button>
+								</div>
+								<div class="pt-3">
+									<h3><%= randomProduct.name %></h3>
+									<p>Price: ₹ <%= randomProduct.price %></p>
+									<p>Stock Remaining : <%= randomProduct.stock %></p>
+									<button type="submit" class="" style="background: none;
+								border: none;"><p>Read More</p></button>
+								</div>
+							</div>
+							<input type="hidden" name="productId" value="<%= randomProduct._id %>">
+						</form>
+					</div>
+
+					<% }) %>
 
 					<div class="col-12 col-md-6 col-lg-4 mb-4 mb-lg-0">
 						<div class="product-item-sm d-flex">

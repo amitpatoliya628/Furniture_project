@@ -9,21 +9,6 @@
 		<%- include('../partials/header') %>
 		<!-- End Header/Navigation -->
 
-		<!-- Start Hero Section -->
-			<!-- <div class="hero">
-				<div class="container">
-					<div class="row justify-content-between">
-						<div class="col-lg-5">
-							<div class="intro-excerpt">
-								<h1>Cart</h1>
-							</div>
-						</div>
-						
-					</div>
-				</div>
-			</div> -->
-		<!-- End Hero Section -->		
-
 		<div class="untree_co-section before-footer-section">
             <div class="container">
               <div class="row mb-5">
@@ -44,7 +29,7 @@
                         <% cartProducts.forEach( cartProduct => { %>
                         <tr class="cart-row">
                           <td class="product-thumbnail">
-                            <img src="images/product-1.png" alt="Image" class="img-fluid">
+                            <img src="/<%= cartProduct.image %>" alt="Image" class="img-fluid">
                           </td>
 
                           <td class="product-name">
@@ -68,7 +53,7 @@
                                 type="text" 
                                 class="form-control text-center quantity-amount" 
                                 value="1"
-                                disabled
+                                data-product-id="<%= cartProduct._id %>"
                               >
 
                               <div class="input-group-append">
@@ -152,7 +137,7 @@
                     </div>
                     <div class="d-flex justify-content-between mb-3">
                       <span class="text-black">Discount</span>
-                      <strong class="text-black">₹&nbsp;10.00</strong>
+                      <strong class="text-black discount">₹&nbsp;10.00</strong>
                     </div>
                     <div class="d-flex justify-content-between mb-3">
                       <span class="text-black">Shipping</span>
@@ -162,9 +147,16 @@
                       <span class="text-black">Total</span>
                       <strong class="text-black cart-total">₹&nbsp;225.00</strong>
                     </div>
-                    <a href="checkout">
-                      <button class="btn btn-black btn-lg py-3 btn-block" onclick="window.location='checkout.html'">Proceed To Checkout</button>
-                    </a>
+                    <form action="/checkout" method="post" id="checkoutForm">
+                      <input type="hidden" id="subTotalInput" name="subTotalAmount" value="">
+                      <input type="hidden" id="discountInput" name="discount" value="">
+                      <input type="hidden" id="totalAmountInput" name="totalAmount" value="">
+                      <input type="hidden" id="quantitiesInput" name="quantities" value="">
+
+                      
+                      <button type="submit" class="btn btn-black btn-lg py-3 btn-block">Proceed To Checkout</button>
+                      
+                    </form>
                   </div>
                 </div>
               </div>
@@ -188,18 +180,20 @@
               grandTotal += Number(item.innerText);
             });
 
-            document.querySelector('.subTotal').innerText = `₹${grandTotal}`;
-            document.querySelector('.cart-total').innerText = `₹${grandTotal - (grandTotal * 10 / 100)}`;
+            document.querySelector('.subTotal').innerText = `₹ ${grandTotal}`;
+            document.querySelector('.cart-total').innerText = `₹ ${grandTotal - (grandTotal * 10 / 100)}`;
+            document.querySelector('.discount').innerText = `₹ ${grandTotal * 10 / 100}`;
+
           }
 
-          cartRows.forEach(row => {
+          cartRows.forEach((row, index) => {
 
             const increaseBtn = row.querySelector('.increase');
             const decreaseBtn = row.querySelector('.decrease');
 
             const quantityInput = row.querySelector('.quantity-amount');
 
-            const price = parseInt(
+            const price = parseFloat(
               row.querySelector('.price').innerText
             );
 
@@ -207,36 +201,70 @@
 
             // Update Total Function
             function updateTotal() {
-              const quantity = parseInt(quantityInput.value);
+              const quantity = parseInt(quantityInput.value) || 1;
+              console.log(`Row ${index}: Updating price=${price}, quantity=${quantity}, total=${price * quantity}`);
               totalPrice.innerText = price * quantity;
-
               updateCartTotal();
             }
 
+            // Initialize total on page load (handles back button)
+            updateTotal();
+
             // Increase Quantity
-            increaseBtn.addEventListener('click', () => {
-              let quantity = parseInt(quantityInput.value);
-              if(quantity < 10){
-                quantity++;
-                quantityInput.value = quantity;
-                updateTotal();
-              }
-            });
+            if(increaseBtn) {
+              increaseBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                let quantity = parseInt(quantityInput.value) || 1;
+                if(quantity < 10){
+                  quantity++;
+                  quantityInput.value = quantity;
+                  updateTotal();
+                }
+              });
+            }
 
             // Decrease Quantity
-            decreaseBtn.addEventListener('click', () => {
-
-              let quantity = parseInt(quantityInput.value);
-
-              if (quantity > 1) {
-                quantity--;
-                quantityInput.value = quantity;
-                updateTotal();
-              }
-              
-            });
+            if(decreaseBtn) {
+              decreaseBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                let quantity = parseInt(quantityInput.value) || 1;
+                if (quantity > 1) {
+                  quantity--;
+                  quantityInput.value = quantity;
+                  updateTotal();
+                }
+              });
+            }
           });
           updateCartTotal();
+
+          document.getElementById('checkoutForm').addEventListener('submit', function(e){
+              e.preventDefault();
+
+              const subTotalText = document.querySelector('.subTotal').innerText;
+              const discountText = document.querySelector('.discount').innerText;
+              const cartTotalText = document.querySelector('.cart-total').innerText;
+
+              const subTotal = parseFloat(subTotalText.replace(/[₹\s]/g, ''));
+              const discount = parseFloat(discountText.replace(/[₹\s]/g, ''));
+              const total = parseFloat(cartTotalText.replace(/[₹\s]/g, ''));
+
+              // Collect all quantities
+              const quantities = {};
+              document.querySelectorAll('.quantity-amount').forEach(input => {
+                const productId = input.getAttribute('data-product-id');
+                const quantity = parseInt(input.value);
+                quantities[productId] = quantity;
+              });
+
+              document.getElementById('subTotalInput').value = subTotal;
+              document.getElementById('discountInput').value = discount;
+              document.getElementById('totalAmountInput').value = total;
+              document.getElementById('quantitiesInput').value = JSON.stringify(quantities);
+
+              this.submit();
+          })
+
         </script>
 
         <script src="/js/bootstrap.bundle.min.js"></script>
