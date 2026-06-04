@@ -1,14 +1,55 @@
 const Product = require('../model/product');
 const mongoose = require('mongoose');
 
+
+exports.getHostLogin = (req, res, next) => {
+    res.render('host/login', {
+        pageTitle : 'Host Login',
+        isHost : false,
+        errors : null,
+        oldInput : null,
+    });
+}
+
+exports.postHostLogin = (req, res, next) => {
+    const { email, password } = req.body;
+
+    if(email === 'amit123@gmail.com' && password === '87654321') {
+        req.session.isHost = true;
+        return req.session.save((err) => {
+            if (err) {
+                return next(err);
+            }
+            res.redirect('/host/productList');
+        });
+    } else {
+        res.render('host/login', {
+            pageTitle : 'Host Login',
+            isHost : false,
+            errors : ['Invalid email or password'],
+            oldInput : { email }
+        });
+    }
+}
+
 exports.getAddProduct = (req, res, next) => {
+    if(!req.isHost) {
+        console.log('please login as host to access this page');
+        return res.redirect('/host/hostLogin');
+    }
+
     res.render('host/addProduct', {
         pageTitle : 'Add Product',
-        isLoggedIn : req.isLoggedIn,
+        isHost : req.isHost,
     })
 }
 
 exports.postAddProduct = (req, res, next) => {
+    if(!req.isHost) {
+        console.log('please login as host to access this page');
+        return res.redirect('/host/hostLogin');
+    }
+
     console.log(req.body);
     console.log(req.file);
     if(!req.file){
@@ -34,16 +75,27 @@ exports.postAddProduct = (req, res, next) => {
 }
 
 exports.getProductList = (req, res, next) => {
+    if(!req.isHost) {
+        console.log('please login as host to access this page');
+        return res.redirect('/host/hostLogin');
+    }
+
     Product.find().then(products => {
         res.render('host/productList', {
             pageTitle : 'Product List',
             products : products,
-            isLoggedIn : req.isLoggedIn,
+            isHost : req.isHost,
         })
     })
 }
 
+
 exports.getProductDetails = (req, res, next) => {
+    if(!req.isHost) {
+        console.log('please login as host to access this page');
+        return res.redirect('/host/hostLogin');
+    }
+
     const productId = req.params.productId;
     
     // Validate if productId is a valid MongoDB ObjectId
@@ -61,18 +113,23 @@ exports.getProductDetails = (req, res, next) => {
         res.render('host/productDetails', {
             pageTitle : 'Product Details',
             product : product,
-            isLoggedIn : req.isLoggedIn,
+            isHost : req.isHost,
         })
     }).catch(err => {
         console.log('error while fetching product details', err);
         res.status(500).render('store/404', {
             pageTitle: 'Error',
-            isLoggedIn : req.isLoggedIn,
+            isHost : req.isHost,
         });
     })
 }
 
 exports.getEditProduct = (req, res, next) => {
+    if(!req.isHost) {
+        console.log('please login as host to access this page');
+        return res.redirect('/host/hostLogin');
+    }
+
     const productId = req.params.productId;
 
     Product.findById(productId).then(product => {
@@ -82,13 +139,18 @@ exports.getEditProduct = (req, res, next) => {
         res.render('host/editProduct', {
             pageTitle: 'Edit Product',
             product,
-            isLoggedIn : req.isLoggedIn,
+            isHost : req.isHost,
         });
     })
 
 }
 
 exports.postEditProduct = (req, res, next) => {
+    if(!req.isHost) {
+        console.log('please login as host to access this page');
+        return res.redirect('/host/hostLogin');
+    }
+
     const { productId, name, price, description, category, stock, image } = req.body;
     console.log(req.body);
     
@@ -119,7 +181,7 @@ exports.postEditProduct = (req, res, next) => {
         res.render('host/productDetails', {
             pageTitle : 'Product Details',
             product,
-            isLoggedIn : req.isLoggedIn,
+            isHost : req.isHost,
         })
     }).catch(err => {
         console.log('error while finding product for update', err);
@@ -127,6 +189,10 @@ exports.postEditProduct = (req, res, next) => {
 }
 
 exports.postDeleteProduct = async (req, res, next) => {
+    if(!req.isHost) {
+        console.log('please login as host to access this page');
+        return res.redirect('/host/hostLogin');
+    }
     const productId = req.body.productId;
     await Product.findByIdAndDelete(productId).then(product => {
         if(!product){

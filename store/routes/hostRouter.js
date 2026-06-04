@@ -3,6 +3,8 @@ const hostRouter = express.Router();
 
 const hostController = require('../controller/hostController');
 
+hostRouter.get('/hostLogin', hostController.getHostLogin);
+hostRouter.post('/hostLogin', hostController.postHostLogin);
 hostRouter.get('/addProduct', hostController.getAddProduct);
 hostRouter.post('/addProduct', hostController.postAddProduct);
 hostRouter.get('/productList', hostController.getProductList);
