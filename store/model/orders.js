@@ -74,7 +74,7 @@ const orderSchema = mongoose.Schema({
         require : true,
     },
 
-    createsAt : {
+    createdAt : {
         type : Date,
         default : Date.now,
     },

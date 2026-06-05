@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+    <%- include('../partials/head'); %>
+<body>
+
+    <!-- Start Header/Navigation -->
+    <%- include('../partials/header') %>
+    <!-- End Header/Navigation -->
+
+    <!-- Start User Profile Section -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row mb-5">
+                <div class="col-lg-12">
+                    <h1 class="mb-4">My Account</h1>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- User Info Sidebar -->
+                <div class="col-lg-3 mb-4">
+                    <div class="card shadow-sm">
+                        <div class="card-body text-center">
+                            <div class="mb-3">
+                                <i class="fas fa-user-circle" style="font-size: 80px; color: #6c757d;"></i>
+                            </div>
+                            <h5 class="card-title">Amit Patoliya</h5>
+                            <p class="text-muted">amit@gmail.com</p>
+                            
+                            <hr>
+                            
+                            <div class="d-grid gap-2">
+                                <a href="/edit-profile" class="btn btn-primary btn-sm">Edit Profile</a>
+                                <a href="/change-password" class="btn btn-secondary btn-sm">Change Password</a>
+                                <a href="/logout" class="btn btn-danger btn-sm">Logout</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Content Area -->
+                <div class="col-lg-9">
+                    <!-- User Information Card -->
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">Personal Information</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <strong>Full Name:</strong>
+                                    <p>Amit Patoliya</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <strong>Email:</strong>
+                                    <p>amit@gmail.com</p>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <strong>Phone:</strong>
+                                    <p><%= user.mobile || 'Not provided' %></p>
+                                </div>
+                                <div class="col-md-6">
+                                    <strong>Member Since:</strong>
+                                    <p><%= new Date(user.createdAt).toLocaleDateString() %></p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <strong>Address:</strong>
+                                    <p><%= (orders && orders.length > 0) ? orders[0].shippingAddress.address : 'Not provided' %></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Order History Card -->
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">Order History</h5>
+                        </div>
+                        <div class="card-body">
+                            <% if (orders && orders.length > 0) { %>
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Index ID</th>
+                                                <th>Date</th>
+                                                <th>Items</th>
+                                                <th>Total</th>
+                                                <th>Status</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% orders.forEach((order, i) => { %>
+                                                <tr>
+                                                    <td><%= i + 1 %></td>
+                                                    <td><%= new Date(order.createdAt).toLocaleDateString() %></td>
+                                                    <td><%= order.orderItems.length %> item(s)</td>
+                                                    <td>₹ <%= order.total %></td>
+                                                    <td>
+                                                        <span class="badge bg-<%= order.status === 'delivered' ? 'success' : order.status === 'pending' ? 'warning' : 'info' %>">
+                                                            <%= order.status %>
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <a href="/order/<%= order._id %>" class="btn btn-sm btn-outline-primary">View</a>
+                                                    </td>
+                                                </tr>
+                                            <% }); %>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            <% } else { %>
+                                <div class="alert alert-info" role="alert">
+                                    <i class="fas fa-info-circle"></i> No orders yet. 
+                                    <a href="/shop" class="alert-link">Start shopping</a>
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- End User Profile Section -->
+
+    <!-- Start Footer Section -->
+    <%- include('../partials/footer') %>
+    <!-- End Footer Section -->	
+
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/tiny-slider.js"></script>
+    <script src="/js/custom.js"></script>
+    
+</body>
+</html>

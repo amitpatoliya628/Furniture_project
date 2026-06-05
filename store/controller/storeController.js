@@ -76,6 +76,26 @@ exports.getCart = async (req, res, next) => {
     });
 }
 
+exports.getUser = async (req, res, next) => {
+    if(!req.user) {
+        console.log('please Login First');
+        return res.redirect('/login');
+    }
+
+    const userId = req.user._id;
+    const user = await User.findById(userId);
+
+    const orders = await Order.find({ userId : userId });
+    console.log(orders);
+
+    res.render('store/user', {
+        pageTitle : 'User Page',
+        user,
+        orders,
+        isLoggedIn : req.isLoggedIn,
+    })
+}
+
 exports.getCheckout = async (req, res, next) => {
     if(!req.user){
         console.log('please Login First');
@@ -108,8 +128,6 @@ exports.getCheckout = async (req, res, next) => {
 }
 
 exports.postPlaceOrder = [
-
-    
 
     async (req, res, next) => {
     if(!req.user){
