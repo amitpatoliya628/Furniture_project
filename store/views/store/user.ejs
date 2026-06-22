@@ -31,7 +31,7 @@
                             <div class="card shadow-sm mb-5">
                                 <div class="card-body">
                                     <div class="d-flex align-items-center">
-                                        <i class="fas fa-user-circle" style="font-size: 80px; color: #6c757d; margin-right: 20px;"></i>
+                                        <img src="/images/<%= user.gender === 'male' ? 'download.png' : 'download2.png' %>" alt="<%= user.fullName %>" width="120" height="120" style="margin-right: 20px; border-radius: 50%; object-fit: cover;">
                                         <div>
                                             <h5 class="card-title mb-1"><%= user.fullName %></h5>
                                             <p class="text-muted mb-0"><%= user.email %></p>

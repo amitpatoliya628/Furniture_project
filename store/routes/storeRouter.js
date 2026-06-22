@@ -10,14 +10,18 @@ storeRouter.get('/about', storeController.getAbout);
 storeRouter.get('/blog', storeController.getBlog);
 storeRouter.get('/contact', storeController.getContact);
 storeRouter.get('/cart', storeController.getCart);
+storeRouter.get('/wishlist', storeController.getWishlist);
 storeRouter.get('/user', storeController.getUser);
 storeRouter.post('/checkout', storeController.getCheckout);
 storeRouter.post('/placeOrder', storeController.postPlaceOrder);
 storeRouter.get('/thankyou', storeController.getThankyou);
 
 storeRouter.post('/productDetails', storeController.getProductDetails);
+storeRouter.get('/product/:id', storeController.getProductById);
 storeRouter.post('/addToCart', storeController.getAddToCart);
 storeRouter.post('/removeFromCart', storeController.removeFromCart);
+storeRouter.post('/addToWishlist', storeController.addToWishlist);
+storeRouter.post('/removeFromWishlist', storeController.removeFromWishlist);
 storeRouter.get('/category/:category', storeController.getCategoryProducts);
 
 storeRouter.post('/subscribe', storeController.postSubscribe);

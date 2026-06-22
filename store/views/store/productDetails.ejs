@@ -68,21 +68,37 @@
 						</div>
 
 						<!-- Buttons -->
-						<div class="d-flex gap-3">
+						<div class="d-flex gap-3 flex-wrap">
 							<form action="/addToCart" method="POST">
 								<input type="hidden" name="productId" value="<%= product._id %>">
 								<button type="submit" class="btn btn-outline-dark btn-lg px-4">
 									Add To Cart
 								</button>
 							</form>
-							
-							<form action="" method="POST">
-								<input type="hidden" name="productId" value="<%= product._id %>">
-								<button type="submit" class="btn btn-black btn-lg px-4">
-									Add To Favourite
-								</button>
-							</form>
 
+							<% if(isLoggedIn) { %>
+								<% if(isInWishlist) { %>
+									<form action="/removeFromWishlist" method="POST">
+										<input type="hidden" name="productId" value="<%= product._id %>">
+										<input type="hidden" name="redirectTo" value="/product/<%= product._id %>">
+										<button type="submit" class="btn btn-black btn-lg px-4">
+											<i class="fas fa-heart me-2"></i> Remove From Wishlist
+										</button>
+									</form>
+								<% } else { %>
+									<form action="/addToWishlist" method="POST">
+										<input type="hidden" name="productId" value="<%= product._id %>">
+										<input type="hidden" name="redirectTo" value="/product/<%= product._id %>">
+										<button type="submit" class="btn btn-black btn-lg px-4">
+											<i class="far fa-heart me-2"></i> Add To Wishlist
+										</button>
+									</form>
+								<% } %>
+							<% } else { %>
+								<a href="/login" class="btn btn-black btn-lg px-4">
+									<i class="far fa-heart me-2"></i> Add To Wishlist
+								</a>
+							<% } %>
 						</div>
 					</div>
 				</div>

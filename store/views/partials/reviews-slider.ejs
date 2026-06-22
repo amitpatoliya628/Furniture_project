@@ -1,0 +1,65 @@
+<!-- Start Reviews Slider -->
+<div class="testimonial-section<%= typeof sectionClass !== 'undefined' && sectionClass ? ' ' + sectionClass : '' %>">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-7 mx-auto text-center">
+				<h2 class="section-title">Customer Reviews</h2>
+			</div>
+		</div>
+
+		<div class="row justify-content-center">
+			<div class="col-lg-12">
+				<div class="testimonial-slider-wrap text-center">
+
+					<% if (reviews && reviews.length > 0) { %>
+					<div id="testimonial-nav">
+						<span class="prev" data-controls="prev"><span class="fa fa-chevron-left"></span></span>
+						<span class="next" data-controls="next"><span class="fa fa-chevron-right"></span></span>
+					</div>
+					<% } %>
+
+					<div class="testimonial-slider">
+						<% if (reviews && reviews.length > 0) { %>
+							<% reviews.forEach(function(review) { %>
+								<div class="item">
+									<div class="row justify-content-center">
+										<div class="col-lg-8 mx-auto">
+											<div class="testimonial-block text-center">
+												<blockquote class="mb-5">
+													<p>&ldquo;<%= review.review %>&rdquo;</p>
+												</blockquote>
+
+												<div class="author-info">
+													<div class="author-pic">
+														<img src="/images/<%= review.userId && review.userId.gender === 'male' ? 'download.png' : 'download2.png' %>" alt="<%= review.userId ? review.userId.fullName : 'Customer' %>" class="img-fluid">
+													</div>
+													<h3 class="font-weight-bold"><%= review.userId ? review.userId.fullName : 'Customer' %></h3>
+													<span class="position d-block mb-2"><%= review.productId ? review.productId.name : 'Verified Buyer' %></span>
+													<span class="text-warning"><%= '★'.repeat(review.rating) %><%= '☆'.repeat(5 - review.rating) %></span>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							<% }); %>
+						<% } else { %>
+							<div class="item">
+								<div class="row justify-content-center">
+									<div class="col-lg-8 mx-auto">
+										<div class="testimonial-block text-center">
+											<blockquote class="mb-5">
+												<p>No customer reviews yet. Be the first to share your experience after placing an order!</p>
+											</blockquote>
+										</div>
+									</div>
+								</div>
+							</div>
+						<% } %>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- End Reviews Slider -->

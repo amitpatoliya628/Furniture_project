@@ -6,16 +6,27 @@ const Review = require('../model/review');
 const newsLatter = require('../model/newsLatter');
 const contactMessage = require('../model/contactMessage');
 
+async function getRecentReviews(limit = 10) {
+    return Review.find()
+        .sort({ createdAt: -1 })
+        .limit(limit)
+        .populate('userId', 'fullName gender')
+        .populate('productId', 'name');
+}
+
 exports.getindex = async (req, res, next) => {
     try {
 
         const randomProducts = await Products.aggregate([
             { $sample : {size : 6} },
-        ])
+        ]);
+
+        const reviews = await getRecentReviews();
 
         res.render('store/index',{
             pageTitle : 'Home Page',
             randomProducts : randomProducts,
+            reviews : reviews,
             isLoggedIn : req.isLoggedIn,
         });
 
@@ -35,18 +46,30 @@ exports.getShop = (req, res, next) => {
     } )
 }
 
-exports.getAbout =(req, res, next) => {
-    res.render('store/about', {
-        pageTitle : 'About Page',
-        isLoggedIn : req.isLoggedIn,
-    })
+exports.getAbout = async (req, res, next) => {
+    try {
+        const reviews = await getRecentReviews();
+        res.render('store/about', {
+            pageTitle : 'About Page',
+            reviews : reviews,
+            isLoggedIn : req.isLoggedIn,
+        });
+    } catch (error) {
+        console.log(error);
+    }
 }
 
-exports.getBlog = (req, res, next) => {
-    res.render('store/blog', {
-        pageTitle : 'Blog Page',
-        isLoggedIn : req.isLoggedIn,
-    })
+exports.getBlog = async (req, res, next) => {
+    try {
+        const reviews = await getRecentReviews();
+        res.render('store/blog', {
+            pageTitle : 'Blog Page',
+            reviews : reviews,
+            isLoggedIn : req.isLoggedIn,
+        });
+    } catch (error) {
+        console.log(error);
+    }
 }
 
 exports.getContact = (req, res, next) => {
@@ -197,26 +220,51 @@ exports.getThankyou = (req, res, next) => {
     })
 }
 
-exports.getProductDetails = (req, res, next) => {
-    const productId = req.body.productId;
-        
-    Products.findById(productId).then(product => {
-        if(!product){
-            console.log('Product not found');
-            return res.redirect('/shop');
-        }
-        res.render('store/productDetails', {
-            pageTitle : 'Product Details',
-            product : product,
-            isLoggedIn : req.isLoggedIn,
-        })
-    }).catch(err => {
+exports.getProductDetails = async (req, res, next) => {
+    try {
+        const productId = req.body.productId;
+        return renderProductDetails(req, res, productId);
+    } catch (err) {
         console.log('error while fetching product details', err);
         res.status(500).render('store/404', {
             pageTitle: 'Error',
             isLoggedIn : req.isLoggedIn,
         });
-    })
+    }
+}
+
+exports.getProductById = async (req, res, next) => {
+    try {
+        return renderProductDetails(req, res, req.params.id);
+    } catch (err) {
+        console.log('error while fetching product details', err);
+        res.status(500).render('store/404', {
+            pageTitle: 'Error',
+            isLoggedIn : req.isLoggedIn,
+        });
+    }
+}
+
+async function renderProductDetails(req, res, productId) {
+    const product = await Products.findById(productId);
+
+    if(!product){
+        console.log('Product not found');
+        return res.redirect('/shop');
+    }
+
+    let isInWishlist = false;
+    if(req.user) {
+        const user = await User.findById(req.user._id);
+        isInWishlist = user.wishlist.some(id => id.toString() === productId.toString());
+    }
+
+    res.render('store/productDetails', {
+        pageTitle : 'Product Details',
+        product : product,
+        isInWishlist : isInWishlist,
+        isLoggedIn : req.isLoggedIn,
+    });
 }
 
 exports.getAddToCart = async (req, res, next) => {
@@ -253,6 +301,75 @@ exports.removeFromCart = async (req, res, next) => {
         return res.redirect('/cart');
     }
 
+}
+
+exports.getWishlist = async (req, res, next) => {
+    if(!req.user) {
+        return res.redirect('/login');
+    }
+
+    try {
+        const user = await User.findById(req.user._id);
+        const wishlistProducts = await Promise.all(
+            user.wishlist.map(productId => Products.findById(productId))
+        );
+        const filteredProducts = wishlistProducts.filter(Boolean);
+
+        res.render('store/wishlist', {
+            pageTitle: 'Wishlist Page',
+            isLoggedIn: req.isLoggedIn,
+            wishlistProducts: filteredProducts,
+        });
+    } catch (error) {
+        console.log(error);
+        res.redirect('/');
+    }
+}
+
+exports.addToWishlist = async (req, res, next) => {
+    if(!req.user) {
+        return res.redirect('/login');
+    }
+
+    try {
+        const productId = req.body.productId;
+        const user = await User.findById(req.user._id);
+        const alreadyAdded = user.wishlist.some(id => id.toString() === productId.toString());
+
+        if(!alreadyAdded) {
+            user.wishlist.push(productId);
+            await user.save();
+        }
+
+        const redirectTo = req.body.redirectTo || '/wishlist';
+        return res.redirect(redirectTo);
+    } catch (error) {
+        console.log(error);
+        return res.redirect('/shop');
+    }
+}
+
+exports.removeFromWishlist = async (req, res, next) => {
+    if(!req.user) {
+        return res.redirect('/login');
+    }
+
+    try {
+        const productId = req.body.productId;
+        const user = await User.findById(req.user._id);
+        const inWishlist = user.wishlist.some(id => id.toString() === productId.toString());
+
+        if(inWishlist) {
+            user.wishlist.pull(productId);
+            await user.save();
+        }
+
+        const redirectTo = req.body.redirectTo || '/wishlist';
+        return res.redirect(redirectTo);
+    } catch (error) {
+        console.log(error);
+        return res.redirect('/wishlist');
+    }
 }
 
 exports.getCategoryProducts = (req,res, next) => {
