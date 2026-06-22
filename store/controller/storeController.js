@@ -1,6 +1,7 @@
 const Products = require('../model/product');
 const User = require('../model/user');
 const Order = require('../model/orders');
+const Review = require('../model/review');
 
 const newsLatter = require('../model/newsLatter');
 const contactMessage = require('../model/contactMessage');
@@ -298,4 +299,130 @@ exports.postContactMessage = (req, res, next) => {
         console.log('saved to contact message');
         res.redirect(req.get('referer') + '?contactSuccess=true');
     })
+}
+
+exports.getOrderDetails = async (req, res, next) => {
+    try {
+        const orderId = req.params.id;
+        const order = await Order.findById(orderId).populate('orderItems.productId');
+
+        if (!order) {
+            return res.render('store/404', {
+                pageTitle: 'Order Not Found',
+                isLoggedIn: req.isLoggedIn,
+            });
+        }
+
+        // Check if the logged-in user owns this order
+        if (req.user && req.user._id && req.user._id.toString() !== order.userId.toString()) {
+            return res.render('store/404', {
+                pageTitle: 'Unauthorized',
+                isLoggedIn: req.isLoggedIn,
+            });
+        }
+
+        // Map product details to order items
+        const orderWithDetails = {
+            ...order.toObject(),
+            orderItems: order.orderItems.map(item => {
+                const itemObj = item.toObject ? item.toObject() : item;
+                return {
+                    ...itemObj,
+                    productDetails: item.productId
+                };
+            })
+        };
+
+        const reviewSuccess = req.query.reviewSuccess === 'true';
+
+        res.render('store/orderDetails', {
+            pageTitle: 'Order Details',
+            order: orderWithDetails,
+            isLoggedIn: req.isLoggedIn,
+            reviewSuccess: reviewSuccess,
+        });
+    } catch (error) {
+        console.log(error);
+        res.render('store/404', {
+            pageTitle: 'Error',
+            isLoggedIn: req.isLoggedIn,
+        });
+    }
+}
+
+exports.postSubmitReview = async (req, res, next) => {
+    try {
+        const { productId, orderId, rating, title, review } = req.body;
+        const userId = req.user ? req.user._id : null;
+
+        console.log('Review Submission Data:', { 
+            productId, 
+            orderId, 
+            rating, 
+            title,
+            review,
+            userId,
+        });
+
+        if (!userId) {
+            console.log('User not logged in');
+            return res.redirect('/login');
+        }
+
+        // Verify the order belongs to the user
+        const order = await Order.findById(orderId);
+        if (!order) {
+            console.log('Order not found:', orderId);
+            return res.redirect(`/order/${orderId}?error=Order not found`);
+        }
+
+        if (order.userId.toString() !== userId.toString()) {
+            console.log('Unauthorized - User:', userId.toString(), 'Order User:', order.userId.toString());
+            return res.redirect('/user?error=Unauthorized');
+        }
+
+        // Verify the product is in the order
+        const productInOrder = order.orderItems.some(item => {
+            return item.productId.toString() === productId.toString();
+        });
+        
+        if (!productInOrder) {
+            console.log('Product not in order. ProductId:', productId, 'Order Items:', order.orderItems.map(i => i.productId));
+            return res.redirect(`/order/${orderId}?error=Product not found in order`);
+        }
+
+        // Check if user already reviewed this product for this order
+        const existingReview = await Review.findOne({
+            userId: userId,
+            productId: productId,
+            orderId: orderId
+        });
+
+        if (existingReview) {
+            // Update existing review
+            existingReview.rating = parseInt(rating);
+            existingReview.title = title;
+            existingReview.review = review;
+            const savedReview = await existingReview.save();
+            console.log('Review updated successfully:', savedReview._id);
+        } else {
+            // Create new review
+            const newReview = new Review({
+                userId: userId,
+                productId: productId,
+                orderId: orderId,
+                rating: parseInt(rating),
+                title: title,
+                review: review
+            });
+            const savedReview = await newReview.save();
+            console.log('Review created successfully:', savedReview._id);
+        }
+
+        return res.redirect(`/order/${orderId}?reviewSuccess=true`);
+    } catch (error) {
+        console.log('Error submitting review:', error);
+        console.log('Error stack:', error.stack);
+        return res.redirect('/user?error=Error submitting review');
+    }
 }

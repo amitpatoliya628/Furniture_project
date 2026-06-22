@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+    <%- include('../partials/head'); %>
+<body>
+
+    <!-- Start Header/Navigation -->
+    <%- include('../partials/header') %>
+    <!-- End Header/Navigation -->
+
+    <!-- Start Order Details Section -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row mb-5">
+                <div class="col-lg-12">
+                    <h1 class="mb-4">Order Details</h1>
+                </div>
+            </div>
+
+            <% if(typeof reviewSuccess !== 'undefined' && reviewSuccess) { %>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fas fa-check-circle"></i> Your review has been submitted successfully!
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            <% } %>
+
+            <div class="row">
+                <!-- Main Content Area -->
+                <div class="col-lg-12">
+                    <!-- Order Information Card -->
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header text-white d-flex justify-content-between align-items-center" style="background-color: #3b5d50;">
+                            <h5 class="mb-0">Order Information</h5>
+                            <span class="badge bg-success">Order ID: <%= order._id %></span>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-md-3">
+                                    <strong>Order Date:</strong>
+                                    <p><%= new Date(order.createdAt).toLocaleDateString() %></p>
+                                </div>
+                                <div class="col-md-3">
+                                    <strong>Total Amount:</strong>
+                                    <p><strong>₹ <%= order.total %></strong></p>
+                                </div>
+                                <div class="col-md-3">
+                                    <strong>Payment Method:</strong>
+                                    <p><%= order.paymentMethod %></p>
+                                </div>
+                                <div class="col-md-3">
+                                    <strong>Status:</strong>
+                                    <p>
+                                        <span class="badge bg-<%= order.status === 'delivered' ? 'success' : order.status === 'pending' ? 'warning' : order.status === 'processing' ? 'info' : 'secondary' %>">
+                                            <%= order.status %>
+                                        </span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Shipping Address Card -->
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header text-white" style="background-color: #3b5d50;">
+                            <h5 class="mb-0">Shipping Address</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p>
+                                        <strong><%= order.shippingAddress.fullName %></strong><br>
+                                        <%= order.shippingAddress.address %><br>
+                                        <%= order.shippingAddress.city %>, <%= order.shippingAddress.state %> - <%= order.shippingAddress.pinCode %><br>
+                                        <strong>Phone:</strong> <%= order.shippingAddress.phone %>
+                                    </p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p>
+                                        <strong>Email:</strong> <%= order.email %><br>
+                                        <strong>Phone:</strong> <%= order.phone %>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Order Items Card -->
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header text-white" style="background-color: #3b5d50;">
+                            <h5 class="mb-0">Order Items</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Product</th>
+                                            <th>Price</th>
+                                            <th>Quantity</th>
+                                            <th>Total</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% order.orderItems.forEach((item, index) => { %>
+                                            <tr>
+                                                <td>
+                                                    <% if(item.productDetails) { %>
+                                                        <strong><%= item.productDetails.name %></strong>
+                                                    <% } else { %>
+                                                        <strong>Product (ID: <%= item.productId %>)</strong>
+                                                    <% } %>
+                                                </td>
+                                                <td>₹ <%= item.price %></td>
+                                                <td><%= item.quantity %></td>
+                                                <td><strong>₹ <%= item.totalPrice %></strong></td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#reviewModal<%= index %>">
+                                                        Review
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        <% }); %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Order Summary Card -->
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header text-white" style="background-color: #3b5d50;">
+                            <h5 class="mb-0">Order Summary</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <span class="text-black">Subtotal:</span>
+                                        <strong class="text-black">₹ <%= order.total %></strong>
+                                    </div>
+                                    <div class="mb-3">
+                                        <span class="text-black">Shipping:</span>
+                                        <strong class="text-black">Free</strong>
+                                    </div>
+                                    <hr>
+                                    <div class="">
+                                        <span class="text-black"><strong>Total:</strong></span>
+                                        <strong class="text-black h5">₹ <%= order.total %></strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="row">
+                        <div class="col-12">
+                            <a href="/user" class="btn" style="background-color: #3b5d50; color: white;">Back to My Orders</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <br>
+    <!-- End Order Details Section -->
+
+    <!-- Start Footer Section -->
+    <%- include('../partials/footer') %>
+    <!-- End Footer Section -->
+
+    <!-- Review Modals -->
+    <% order.orderItems.forEach((item, index) => { %>
+        <div class="modal fade" id="reviewModal<%= index %>" tabindex="-1" aria-labelledby="reviewLabel<%= index %>" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header" style="background-color: #3b5d50; color: white;">
+                        <h5 class="modal-title" id="reviewLabel<%= index %>">
+                            Review - <% if(item.productDetails) { %><%= item.productDetails.name %><% } %>
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form action="/submitReview" method="post">
+                        <div class="modal-body">
+                            <input type="hidden" name="productId" value="<%= item.productId._id ? item.productId._id : item.productId %>">
+                            <input type="hidden" name="orderId" value="<%= order._id %>">
+
+                            <!-- Rating -->
+                            <div class="mb-3">
+                                <label for="rating<%= index %>" class="form-label">Rating</label>
+                                <select class="form-select" id="rating<%= index %>" name="rating" required>
+                                    <option value="">Select a rating</option>
+                                    <option value="5">⭐⭐⭐⭐⭐ 5 - Excellent</option>
+                                    <option value="4">⭐⭐⭐⭐ 4 - Good</option>
+                                    <option value="3">⭐⭐⭐ 3 - Average</option>
+                                    <option value="2">⭐⭐ 2 - Poor</option>
+                                    <option value="1">⭐ 1 - Very Poor</option>
+                                </select>
+                            </div>
+
+                            <!-- Review Title -->
+                            <div class="mb-3">
+                                <label for="title<%= index %>" class="form-label">Review Title</label>
+                                <input type="text" class="form-control" id="title<%= index %>" name="title" placeholder="e.g., Great Quality Product" required>
+                            </div>
+
+                            <!-- Review Text -->
+                            <div class="mb-3">
+                                <label for="review<%= index %>" class="form-label">Your Review</label>
+                                <textarea class="form-control" id="review<%= index %>" name="review" rows="4" placeholder="Share your experience with this product..." required></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn" style="background-color: #3b5d50; color: white;">Submit Review</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    <% }); %>	
+
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/tiny-slider.js"></script>
+    <script src="/js/custom.js"></script>
+    
+</body>
+</html>

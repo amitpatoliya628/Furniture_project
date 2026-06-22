@@ -18,44 +18,29 @@
 
             <div class="row">
                 <!-- User Info Sidebar -->
-                <div class="col-lg-3 mb-4">
-                    <div class="card shadow-sm">
-                        <div class="card-body text-center">
-                            <div class="mb-3">
-                                <i class="fas fa-user-circle" style="font-size: 80px; color: #6c757d;"></i>
-                            </div>
-                            <h5 class="card-title">Amit Patoliya</h5>
-                            <p class="text-muted">amit@gmail.com</p>
-                            
-                            <hr>
-                            
-                            <div class="d-grid gap-2">
-                                <a href="/edit-profile" class="btn btn-primary btn-sm">Edit Profile</a>
-                                <a href="/change-password" class="btn btn-secondary btn-sm">Change Password</a>
-                                <a href="/logout" class="btn btn-danger btn-sm">Logout</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
+                
                 <!-- Main Content Area -->
-                <div class="col-lg-9">
+                <div class="col-lg-12 mb-3">
                     <!-- User Information Card -->
                     <div class="card shadow-sm mb-4">
-                        <div class="card-header bg-primary text-white">
+                        <div class="card-header text-white d-flex justify-content-between align-items-center" style="background-color: #3b5d50;">
                             <h5 class="mb-0">Personal Information</h5>
+                            <a href="/edit-profile" class="btn btn-light btn-sm">Edit Profile</a>
                         </div>
                         <div class="card-body">
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <strong>Full Name:</strong>
-                                    <p>Amit Patoliya</p>
-                                </div>
-                                <div class="col-md-6">
-                                    <strong>Email:</strong>
-                                    <p>amit@gmail.com</p>
+                            <div class="card shadow-sm mb-5">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-user-circle" style="font-size: 80px; color: #6c757d; margin-right: 20px;"></i>
+                                        <div>
+                                            <h5 class="card-title mb-1"><%= user.fullName %></h5>
+                                            <p class="text-muted mb-0"><%= user.email %></p>
+                                        </div>
+                                    </div>
+                                    <hr>
                                 </div>
                             </div>
+                            
                             <div class="row mb-3">
                                 <div class="col-md-6">
                                     <strong>Phone:</strong>
@@ -77,7 +62,7 @@
 
                     <!-- Order History Card -->
                     <div class="card shadow-sm">
-                        <div class="card-header bg-primary text-white">
+                        <div class="card-header text-white" style="background-color: #3b5d50;">
                             <h5 class="mb-0">Order History</h5>
                         </div>
                         <div class="card-body">
@@ -126,6 +111,7 @@
             </div>
         </div>
     </section>
+    <br>
     <!-- End User Profile Section -->
 
     <!-- Start Footer Section -->

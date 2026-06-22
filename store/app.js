@@ -41,6 +41,7 @@ app.use( (req, res, next) => {
     req.isHost = req.session.isHost;
     req.isLoggedIn = req.session.isLoggedIn;
     req.user = req.session.user;
+    req.userId = req.session.user ? req.session.user._id : null;
     next();
 });
 

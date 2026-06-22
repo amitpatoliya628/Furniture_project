@@ -26,82 +26,68 @@
                         </tr>
                       </thead>
                       <tbody>
-                        <% cartProducts.forEach( cartProduct => { %>
-                        <tr class="cart-row">
-                          <td class="product-thumbnail">
-                            <img src="/<%= cartProduct.image %>" alt="Image" class="img-fluid">
-                          </td>
+                        <% if(cartProducts && cartProducts.length > 0){ %>
+                          <% cartProducts.forEach( cartProduct => { %>
+                          <tr class="cart-row">
+                            <td class="product-thumbnail">
+                              <img src="/<%= cartProduct.image %>" alt="Image" class="img-fluid">
+                            </td>
 
-                          <td class="product-name">
-                            <h2 class="h5 text-black"><%= cartProduct.name %></h2>
-                          </td>
+                            <td class="product-name">
+                              <h2 class="h5 text-black"><%= cartProduct.name %></h2>
+                            </td>
 
-                          <td class="product-price">
-                            ₹ <span class="price"><%= cartProduct.price %></span>
-                          </td>
+                            <td class="product-price">
+                              ₹ <span class="price"><%= cartProduct.price %></span>
+                            </td>
 
-                          <td>
-                            <div class="input-group mb-3 d-flex align-items-center quantity-container" style="max-width: 120px;">
+                            <td>
+                              <div class="input-group mb-3 d-flex align-items-center quantity-container" style="max-width: 120px;">
 
-                              <div class="input-group-prepend">
-                                <button class="btn btn-outline-black decrease" type="button">
-                                  &minus;
-                                </button>
+                                <div class="input-group-prepend">
+                                  <button class="btn btn-outline-black decrease" type="button">
+                                    &minus;
+                                  </button>
+                                </div>
+
+                                <input 
+                                  type="text" 
+                                  class="form-control text-center quantity-amount" 
+                                  value="1"
+                                  data-product-id="<%= cartProduct._id %>"
+                                >
+
+                                <div class="input-group-append">
+                                  <button class="btn btn-outline-black increase" type="button">
+                                    &plus;
+                                  </button>
+                                </div>
+
                               </div>
+                            </td>
 
-                              <input 
-                                type="text" 
-                                class="form-control text-center quantity-amount" 
-                                value="1"
-                                data-product-id="<%= cartProduct._id %>"
-                              >
+                            <td class="product-total">
+                              ₹ <span class="total-price"><%= cartProduct.price %></span>
+                            </td>
 
-                              <div class="input-group-append">
-                                <button class="btn btn-outline-black increase" type="button">
-                                  &plus;
-                                </button>
-                              </div>
+                            <td>
+                              <form action="/removeFromCart" method="post">
+                                <input type="hidden" name="productId" value="<%= cartProduct._id %>">
+                                <button type="submit" class="btn btn-black btn-sm">X</button>
+                              </form>
+                            </td>
+                          </tr>
 
-                            </div>
-                          </td>
-
-                          <td class="product-total">
-                            ₹ <span class="total-price"><%= cartProduct.price %></span>
-                          </td>
-
-                          <td>
-                            <form action="/removeFromCart" method="post">
-                              <input type="hidden" name="productId" value="<%= cartProduct._id %>">
-                              <button type="submit" class="btn btn-black btn-sm">X</button>
-                            </form>
-                          </td>
-                        </tr>
-
-                        <% }) %>
+                          <% }) %>
+                        <% } else { %>
+                          <tr>
+                            <td colspan="6" class="text-center py-5">
+                              <h2 class="text-black">Your Cart is Empty!</h2>
+                              <p><a href="/shop" class="btn btn-black btn-lg py-3 btn-block">Continue Shopping</a></p>
+                            </td>
+                          </tr>
+                        <% } %>
                           
-                        <tr>
-                          <td class="product-thumbnail">
-                            <img src="images/product-2.png" alt="Image" class="img-fluid">
-                          </td>
-                          <td class="product-name">
-                            <h2 class="h5 text-black">Product 2</h2>
-                          </td>
-                          <td>₹&nbsp;49.00</td>
-                          <td>
-                            <div class="input-group mb-3 d-flex align-items-center quantity-container" style="max-width: 120px;">
-                              <div class="input-group-prepend">
-                                <button class="btn btn-outline-black decrease" type="button">&minus;</button>
-                              </div>
-                              <input type="text" class="form-control text-center quantity-amount" value="1" placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1">
-                              <div class="input-group-append">
-                                <button class="btn btn-outline-black increase" type="button">&plus;</button>
-                              </div>
-                            </div>
-        
-                          </td>
-                          <td>₹&nbsp;49.00</td>
-                          <td><a href="#" class="btn btn-black btn-sm">X</a></td>
-                        </tr>
                       </tbody>
                     </table>
                   </div>

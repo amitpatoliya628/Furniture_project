@@ -22,6 +22,8 @@ storeRouter.get('/category/:category', storeController.getCategoryProducts);
 
 storeRouter.post('/subscribe', storeController.postSubscribe);
 storeRouter.post('/contactMessage', storeController.postContactMessage);
+storeRouter.get('/order/:id', storeController.getOrderDetails);
+storeRouter.post('/submitReview', storeController.postSubmitReview);
 
 
 module.exports = storeRouter;

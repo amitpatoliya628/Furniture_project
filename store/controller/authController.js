@@ -28,7 +28,7 @@ exports.postLogin = async (req, res, next) => {
     const validPassword = await bcrypt.compare(password, user.password);
 
     if(!validPassword) { 
-        return res.status(422).render('/login', {
+        return res.status(422).render('auth/login', {
             pageTitle : 'LoginPage',
             isLoggedIn : false,
             errors : ['password is incorrect'],
