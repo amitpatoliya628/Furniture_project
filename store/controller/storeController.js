@@ -21,11 +21,34 @@ exports.getindex = async (req, res, next) => {
             { $sample : {size : 6} },
         ]);
 
+        const categoryShowcase = await Products.aggregate([
+            {
+                $group: {
+                    _id: "$category",
+                    productId: { $first: "$_id" },
+                    name: { $first: "$name" },
+                    price: { $first: "$price" },
+                    image: { $first: "$image" },
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    category: "$_id",
+                    productId: 1,
+                    name: 1,
+                    price: 1,
+                    image: 1
+                }
+            }
+        ]);
+
         const reviews = await getRecentReviews();
 
         res.render('store/index',{
             pageTitle : 'Home Page',
             randomProducts : randomProducts,
+            categoryShowcase : categoryShowcase,
             reviews : reviews,
             isLoggedIn : req.isLoggedIn,
         });

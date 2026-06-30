@@ -55,13 +55,14 @@
 
                                 <div class="form-group mb-4">
                                     <label class="text-black" for="category">Category</label>
-                                    
-                                    <select class="form-control" name="category" id="category" required>
-                                        <option value="" disabled selected>Select Category</option>
-                                        <option value="Chair">Chair</option>
-                                        <option value="Sofa">Sofa</option>
-                                        <option value="Couch">Couch</option>
-                                    </select>
+                                    <input type="text" class="form-control" id="category" name="category" list="category-list" placeholder="Select or type a category" required>
+                                    <datalist id="category-list">
+                                        <% if (locals.categories) { %>
+                                            <% categories.forEach(cat => { %>
+                                                <option value="<%= cat %>"></option>
+                                            <% }) %>
+                                        <% } %>
+                                    </datalist>
                                 </div>
 
                                 <div class="form-group mb-4">

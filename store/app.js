@@ -14,6 +14,7 @@ const authRouter = require('./routes/authRouter');
 const hostRouter = require('./routes/hostRouter');
 const errorController = require('./controller/errorController');
 const rootdir = require('./utils/pathutils');
+const Product = require('./model/product');
 
 const PATH = "mongodb://mongodb:mongodb01@ac-dghizuz-shard-00-00.8ubrtoz.mongodb.net:27017,ac-dghizuz-shard-00-01.8ubrtoz.mongodb.net:27017,ac-dghizuz-shard-00-02.8ubrtoz.mongodb.net:27017/Furni?ssl=true&replicaSet=atlas-11m6yn-shard-0&authSource=admin&appName=NodeJs"
 
@@ -42,6 +43,17 @@ app.use( (req, res, next) => {
     req.isLoggedIn = req.session.isLoggedIn;
     req.user = req.session.user;
     req.userId = req.session.user ? req.session.user._id : null;
+    next();
+});
+
+app.use(async (req, res, next) => {
+    try {
+        const categories = await Product.distinct('category');
+        res.locals.categories = categories || [];
+    } catch (err) {
+        console.error("Error fetching categories in middleware:", err);
+        res.locals.categories = [];
+    }
     next();
 });
 

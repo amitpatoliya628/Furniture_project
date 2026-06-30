@@ -15,9 +15,20 @@
 						<li class="<%= pageTitle === 'Shop Page' ? 'active' : ''  %>">
 							<a class="nav-link" href="/shop">Shop</a>
 						</li>
-						<!-- <li class="<%= pageTitle === 'Category Page' ? 'active' : '' %>">
-							<a class="nav-link" href="category">Category</a>
-						</li> -->
+						<li class="nav-item dropdown <%= pageTitle === 'Category Page' ? 'active' : '' %>">
+							<a class="nav-link dropdown-toggle" href="#" id="categoryDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+								Categories
+							</a>
+							<ul class="dropdown-menu bg-dark" aria-labelledby="categoryDropdown">
+								<% if (locals.categories && categories.length > 0) { %>
+									<% categories.forEach(category => { %>
+										<li><a class="dropdown-item text-white bg-dark" href="/category/<%= category %>"><%= category %></a></li>
+									<% }) %>
+								<% } else { %>
+									<li><a class="dropdown-item disabled text-white bg-dark" href="#">No categories found</a></li>
+								<% } %>
+							</ul>
+						</li>
 						<li class="<%= pageTitle === 'About Page' ? 'active' : '' %>">
 							<a class="nav-link" href="/about">About us</a>
 						</li>
