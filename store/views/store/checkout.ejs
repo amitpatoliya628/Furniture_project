@@ -97,17 +97,21 @@
 								</tr>
 								<% }) %>
 								<tr>
-								<td>Polo Shirt <strong class="mx-2">x</strong>   1</td>
-								<td>$100.00</td>
-								</tr>
-								<tr>
 								<td class="text-black font-weight-bold"><strong>Cart Subtotal</strong></td>
-								<td class="text-black"><%= subTotal %></td>
+								<td class="text-black">₹ <%= subTotal %></td>
 								</tr>
+								<% if (locals.discount && parseFloat(discount) > 0) { %>
+								<tr>
+								<td class="text-black font-weight-bold"><strong>Discount (<%= couponCode %>)</strong></td>
+								<td class="text-black text-danger">-₹ <%= discount %></td>
+								</tr>
+								<% } %>
 								<tr>
 								<td class="text-black font-weight-bold"><strong>Order Total</strong></td>
-								<td class="text-black font-weight-bold"><strong><%= total %></strong></td>
+								<td class="text-black font-weight-bold"><strong>₹ <%= total %></strong></td>
 								<input type="hidden" name="orderTotal" value="<%= total %>">
+								<input type="hidden" name="discount" value="<%= discount %>">
+								<input type="hidden" name="couponCode" value="<%= couponCode %>">
 								</tr>
 							</tbody>
 							</table>

@@ -2,6 +2,7 @@ const Products = require('../model/product');
 const User = require('../model/user');
 const Order = require('../model/orders');
 const Review = require('../model/review');
+const Coupon = require('../model/coupon');
 
 const newsLatter = require('../model/newsLatter');
 const contactMessage = require('../model/contactMessage');
@@ -116,12 +117,88 @@ exports.getCart = async (req, res, next) => {
 
     const resolvedCartProducts = await Promise.all(cartProducts);
 
+    // Fetch active coupons and applied coupon from session
+    const availableCoupons = await Coupon.find({ isActive: true });
+    const appliedCoupon = req.session.appliedCoupon || null;
+
     res.render('store/cart', {
         pageTitle : 'Cart Page',
         isLoggedIn : req.isLoggedIn,
         cartProducts: resolvedCartProducts,
+        availableCoupons: availableCoupons,
+        appliedCoupon: appliedCoupon
     });
 }
+
+exports.postApplyCoupon = async (req, res, next) => {
+    try {
+        const { couponCode, quantities } = req.body;
+        if (!couponCode) {
+            return res.json({ success: false, message: 'Please enter a coupon code' });
+        }
+
+        const coupon = await Coupon.findOne({ code: couponCode.trim().toUpperCase(), isActive: true });
+        if (!coupon) {
+            return res.json({ success: false, message: 'Invalid or inactive coupon code' });
+        }
+
+        // Calculate subtotal from cart products
+        if (!req.user) {
+            return res.json({ success: false, message: 'Please log in to apply coupons' });
+        }
+        const user = await User.findById(req.user._id);
+        
+        let subtotal = 0;
+        for (const productId of user.cart) {
+            const product = await Products.findById(productId);
+            if (product) {
+                const qty = quantities && quantities[productId] ? parseInt(quantities[productId]) : 1;
+                subtotal += product.price * qty;
+            }
+        }
+
+        if (subtotal < coupon.minCartValue) {
+            return res.json({ 
+                success: false, 
+                message: `Minimum purchase of ₹${coupon.minCartValue} required for this coupon.` 
+            });
+        }
+
+        let discount = 0;
+        if (coupon.discountType === 'percentage') {
+            discount = subtotal * (coupon.discountValue / 100);
+        } else if (coupon.discountType === 'flat') {
+            discount = Math.min(coupon.discountValue, subtotal);
+        }
+
+        // Save applied coupon details to session
+        req.session.appliedCoupon = {
+            code: coupon.code,
+            discountType: coupon.discountType,
+            discountValue: coupon.discountValue,
+            minCartValue: coupon.minCartValue
+        };
+
+        return res.json({
+            success: true,
+            couponCode: coupon.code,
+            discountType: coupon.discountType,
+            discountValue: coupon.discountValue,
+            minCartValue: coupon.minCartValue,
+            discount: discount,
+            total: subtotal - discount,
+            message: `Coupon "${coupon.code}" applied successfully!`
+        });
+    } catch (err) {
+        console.error("Error applying coupon:", err);
+        return res.json({ success: false, message: 'An error occurred while applying the coupon.' });
+    }
+};
+
+exports.postRemoveCoupon = async (req, res, next) => {
+    req.session.appliedCoupon = null;
+    return res.json({ success: true, message: 'Coupon removed successfully!' });
+};
 
 exports.getUser = async (req, res, next) => {
     if(!req.user) {
@@ -152,6 +229,7 @@ exports.getCheckout = async (req, res, next) => {
     const subTotal = req.body.subTotalAmount;
     const discount = req.body.discount;
     const total = req.body.totalAmount;
+    const couponCode = req.body.couponCode || '';
     const quantities = req.body.quantities ? JSON.parse(req.body.quantities) : {};
     const userId = req.user._id;
     const user = await User.findById(userId);
@@ -170,6 +248,7 @@ exports.getCheckout = async (req, res, next) => {
         subTotal,
         discount,
         total,
+        couponCode,
         isLoggedIn : req.isLoggedIn,
     })
 }
@@ -184,7 +263,7 @@ exports.postPlaceOrder = [
 
     const { c_fname, c_email_address, c_phone, c_address, c_address2, c_city, c_state_country, c_postal_zip } = req.body;
     const c_full_address = c_address + c_address2;
-    const { orderTotal, paymentMethod, paymentOption } = req.body;
+    const { orderTotal, discount, couponCode, paymentMethod, paymentOption } = req.body;
     const userId = req.user._id;
     const user = await User.findById(userId);
 
@@ -221,12 +300,16 @@ exports.postPlaceOrder = [
             pinCode : c_postal_zip,
         },
         total : orderTotal,
+        discount : discount ? parseFloat(discount) : 0,
+        couponCode : couponCode || null,
         paymentMethod : paymentMethod,
 
     });
 
     await order.save().then( async () => {
         console.log('order placed successfully');
+        // Clear applied coupon from session
+        req.session.appliedCoupon = null;
         // Use findByIdAndUpdate to avoid version conflicts
         await User.findByIdAndUpdate(userId, { cart: [] }, { new: true });
         return res.redirect('/thankyou');

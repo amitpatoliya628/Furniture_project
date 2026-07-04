@@ -15,6 +15,8 @@ const hostRouter = require('./routes/hostRouter');
 const errorController = require('./controller/errorController');
 const rootdir = require('./utils/pathutils');
 const Product = require('./model/product');
+const Coupon = require('./model/coupon');
+
 
 const PATH = "mongodb://mongodb:mongodb01@ac-dghizuz-shard-00-00.8ubrtoz.mongodb.net:27017,ac-dghizuz-shard-00-01.8ubrtoz.mongodb.net:27017,ac-dghizuz-shard-00-02.8ubrtoz.mongodb.net:27017/Furni?ssl=true&replicaSet=atlas-11m6yn-shard-0&authSource=admin&appName=NodeJs"
 
@@ -110,8 +112,24 @@ const PORT = 5000;
 
 
 
-mongoose.connect(PATH).then( () => {
+mongoose.connect(PATH).then( async () => {
     console.log("connected to MongoDB");
+    // Seed default coupons if not already present
+    try {
+        const count = await Coupon.countDocuments();
+        if (count === 0) {
+            const defaultCoupons = [
+                { code: 'WELCOME10', discountType: 'percentage', discountValue: 10, minCartValue: 100, isActive: true },
+                { code: 'FLAT500', discountType: 'flat', discountValue: 500, minCartValue: 2000, isActive: true },
+                { code: 'FURNI20', discountType: 'percentage', discountValue: 20, minCartValue: 500, isActive: true }
+            ];
+            await Coupon.insertMany(defaultCoupons);
+            console.log("Default coupons seeded successfully!");
+        }
+    } catch (err) {
+        console.error("Error seeding coupons:", err);
+    }
+
     app.listen(PORT, () => {
         console.log(`Server Started on address http://localhost:${PORT}`);
     });

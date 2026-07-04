@@ -1,4 +1,5 @@
 const Product = require('../model/product');
+const Coupon = require('../model/coupon');
 const mongoose = require('mongoose');
 
 
@@ -202,3 +203,60 @@ exports.postDeleteProduct = async (req, res, next) => {
         res.redirect('/host/productList');
     })
 }
+
+exports.getCoupons = async (req, res, next) => {
+    if(!req.isHost) {
+        console.log('please login as host to access this page');
+        return res.redirect('/host/hostLogin');
+    }
+    try {
+        const coupons = await Coupon.find().sort({ createdAt: -1 });
+        res.render('host/coupons', {
+            pageTitle: 'Manage Coupons',
+            coupons: coupons,
+            isHost: req.isHost
+        });
+    } catch (err) {
+        console.error("Error fetching coupons for host:", err);
+        next(err);
+    }
+};
+
+exports.postAddCoupon = async (req, res, next) => {
+    if(!req.isHost) {
+        console.log('please login as host to access this page');
+        return res.redirect('/host/hostLogin');
+    }
+    try {
+        const { code, discountType, discountValue, minCartValue, isActive } = req.body;
+        const coupon = new Coupon({
+            code: code.trim().toUpperCase(),
+            discountType,
+            discountValue: parseFloat(discountValue),
+            minCartValue: parseFloat(minCartValue) || 0,
+            isActive: isActive === 'true'
+        });
+        await coupon.save();
+        console.log('Coupon created successfully:', coupon.code);
+        res.redirect('/host/coupons');
+    } catch (err) {
+        console.error("Error creating coupon:", err);
+        next(err);
+    }
+};
+
+exports.postDeleteCoupon = async (req, res, next) => {
+    if(!req.isHost) {
+        console.log('please login as host to access this page');
+        return res.redirect('/host/hostLogin');
+    }
+    try {
+        const { couponId } = req.body;
+        await Coupon.findByIdAndDelete(couponId);
+        console.log('Coupon deleted successfully:', couponId);
+        res.redirect('/host/coupons');
+    } catch (err) {
+        console.error("Error deleting coupon:", err);
+        next(err);
+    }
+};

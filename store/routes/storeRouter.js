@@ -23,6 +23,8 @@ storeRouter.post('/removeFromCart', storeController.removeFromCart);
 storeRouter.post('/addToWishlist', storeController.addToWishlist);
 storeRouter.post('/removeFromWishlist', storeController.removeFromWishlist);
 storeRouter.get('/category/:category', storeController.getCategoryProducts);
+storeRouter.post('/apply-coupon', storeController.postApplyCoupon);
+storeRouter.post('/remove-coupon', storeController.postRemoveCoupon);
 
 storeRouter.post('/subscribe', storeController.postSubscribe);
 storeRouter.post('/contactMessage', storeController.postContactMessage);

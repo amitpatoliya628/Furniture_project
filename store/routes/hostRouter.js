@@ -14,4 +14,8 @@ hostRouter.get('/editProduct/:productId', hostController.getEditProduct);
 hostRouter.post('/editProduct', hostController.postEditProduct);
 hostRouter.post('/productDelete', hostController.postDeleteProduct);
 
+hostRouter.get('/coupons', hostController.getCoupons);
+hostRouter.post('/addCoupon', hostController.postAddCoupon);
+hostRouter.post('/deleteCoupon', hostController.postDeleteCoupon);
+
 module.exports = hostRouter;

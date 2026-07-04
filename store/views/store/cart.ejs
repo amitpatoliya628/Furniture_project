@@ -1,160 +1,197 @@
 <!doctype html>
 <html lang="en">
 
-	<%- include('../partials/head') %>
+<%- include('../partials/head') %>
 
-	<body>
+  <body>
 
-		<!-- Start Header/Navigation -->
-		<%- include('../partials/header') %>
-		<!-- End Header/Navigation -->
+    <!-- Start Header/Navigation -->
+    <%- include('../partials/header') %>
+      <!-- End Header/Navigation -->
 
-		<div class="untree_co-section before-footer-section">
-            <div class="container">
-              <div class="row mb-5">
-                <div class="col-md-12">
-                  <div class="site-blocks-table">
-                    <table class="table">
-                      <thead>
-                        <tr>
-                          <th class="product-thumbnail">Image</th>
-                          <th class="product-name">Product</th>
-                          <th class="product-price">Price</th>
-                          <th class="product-quantity">Quantity</th>
-                          <th class="product-total">Total</th>
-                          <th class="product-remove">Remove</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <% if(cartProducts && cartProducts.length > 0){ %>
-                          <% cartProducts.forEach( cartProduct => { %>
-                          <tr class="cart-row">
-                            <td class="product-thumbnail">
-                              <img src="/<%= cartProduct.image %>" alt="Image" class="img-fluid">
-                            </td>
+      <div class="untree_co-section before-footer-section">
+        <div class="container">
+          <div class="row mb-5">
+            <div class="col-md-12">
+              <div class="site-blocks-table">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th class="product-thumbnail">Image</th>
+                      <th class="product-name">Product</th>
+                      <th class="product-price">Price</th>
+                      <th class="product-quantity">Quantity</th>
+                      <th class="product-total">Total</th>
+                      <th class="product-remove">Remove</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% if(locals.cartProducts && locals.cartProducts.length > 0){ %>
+                      <% locals.cartProducts.forEach( cartProduct=> { %>
+                        <tr class="cart-row">
+                          <td class="product-thumbnail">
+                            <img src="/<%= cartProduct.image %>" alt="Image" class="img-fluid">
+                          </td>
 
-                            <td class="product-name">
-                              <h2 class="h5 text-black"><%= cartProduct.name %></h2>
-                            </td>
+                          <td class="product-name">
+                            <h2 class="h5 text-black">
+                              <%= cartProduct.name %>
+                            </h2>
+                          </td>
 
-                            <td class="product-price">
-                              ₹ <span class="price"><%= cartProduct.price %></span>
-                            </td>
+                          <td class="product-price">
+                            ₹ <span class="price">
+                              <%= cartProduct.price %>
+                            </span>
+                          </td>
 
-                            <td>
-                              <div class="input-group mb-3 d-flex align-items-center quantity-container" style="max-width: 120px;">
+                          <td>
+                            <div class="input-group mb-3 d-flex align-items-center quantity-container"
+                              style="max-width: 120px;">
 
-                                <div class="input-group-prepend">
-                                  <button class="btn btn-outline-black decrease" type="button">
-                                    &minus;
-                                  </button>
-                                </div>
-
-                                <input 
-                                  type="text" 
-                                  class="form-control text-center quantity-amount" 
-                                  value="1"
-                                  data-product-id="<%= cartProduct._id %>"
-                                >
-
-                                <div class="input-group-append">
-                                  <button class="btn btn-outline-black increase" type="button">
-                                    &plus;
-                                  </button>
-                                </div>
-
+                              <div class="input-group-prepend">
+                                <button class="btn btn-outline-black decrease" type="button">
+                                  &minus;
+                                </button>
                               </div>
-                            </td>
 
-                            <td class="product-total">
-                              ₹ <span class="total-price"><%= cartProduct.price %></span>
-                            </td>
+                              <input type="text" class="form-control text-center quantity-amount" value="1"
+                                data-product-id="<%= cartProduct._id %>">
 
-                            <td>
-                              <form action="/removeFromCart" method="post">
-                                <input type="hidden" name="productId" value="<%= cartProduct._id %>">
-                                <button type="submit" class="btn btn-black btn-sm">X</button>
-                              </form>
-                            </td>
-                          </tr>
+                              <div class="input-group-append">
+                                <button class="btn btn-outline-black increase" type="button">
+                                  &plus;
+                                </button>
+                              </div>
 
-                          <% }) %>
-                        <% } else { %>
-                          <tr>
-                            <td colspan="6" class="text-center py-5">
-                              <h2 class="text-black">Your Cart is Empty!</h2>
-                              <p><a href="/shop" class="btn btn-black btn-lg py-3 btn-block">Continue Shopping</a></p>
-                            </td>
-                          </tr>
-                        <% } %>
-                          
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
+                            </div>
+                          </td>
+
+                          <td class="product-total">
+                            ₹ <span class="total-price">
+                              <%= cartProduct.price %>
+                            </span>
+                          </td>
+
+                          <td>
+                            <form action="/removeFromCart" method="post">
+                              <input type="hidden" name="productId" value="<%= cartProduct._id %>">
+                              <button type="submit" class="btn btn-black btn-sm">X</button>
+                            </form>
+                          </td>
+                        </tr>
+
+                        <% }) %>
+                          <% } else { %>
+                            <tr>
+                              <td colspan="6" class="text-center py-5">
+                                <h2 class="text-black">Your Cart is Empty!</h2>
+                                <p><a href="/shop" class="btn btn-black btn-lg py-3 btn-block">Continue Shopping</a></p>
+                              </td>
+                            </tr>
+                            <% } %>
+
+                  </tbody>
+                </table>
               </div>
-        
-                <div class="row mb-4">
-                  <div class="col-12">
-                    <div class="bg-light rounded border p-4">
-                      <h3 class="text-black h4 mb-3">Coupon</h3>
-                      <p class="mb-4">Enter your coupon code if you have one.</p>
-                      <div class="row">
-                        <div class="col-md-9 mb-3 mb-md-0">
-                          <input type="text" class="form-control py-3" id="coupon" placeholder="Coupon Code">
-                        </div>
-                        <div class="col-md-3">
-                          <button class="btn btn-black btn-block py-3">Apply Coupon</button>
-                        </div>
-                      </div>
-                    </div>
+            </div>
+          </div>
+
+          <div class="row mb-4">
+            <div class="col-12">
+              <div class="bg-light rounded border p-4 shadow-sm">
+                <h3 class="text-black h4 mb-3">Coupon</h3>
+                <p class="mb-3 text-muted">Enter your coupon code if you have one.</p>
+                <div class="row">
+                  <div class="col-md-7 mb-3 mb-md-0">
+                    <input type="text" class="form-control py-3" style="font-weight: 600; text-transform: uppercase;"
+                      id="coupon" placeholder="Coupon Code" value="<%= locals.appliedCoupon ? locals.appliedCoupon.code : '' %>">
+                    <span id="coupon-msg" class="mt-2 d-block small"></span>
+                  </div>
+                  <div class="col-md-5 d-flex gap-2">
+                    <button type="button" id="apply-coupon-btn" class="btn btn-black flex-grow-1 py-3">Apply
+                      Coupon</button>
+                    <button type="button" id="remove-coupon-btn"
+                      class="btn btn-outline-danger py-3 <%= locals.appliedCoupon ? '' : 'd-none' %>">Remove</button>
                   </div>
                 </div>
-              <div class="row">
-                <div class="col-12">
-                  <div class="bg-light rounded border p-4">
-                    <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4">
-                      <h3 class="text-black h4 text-uppercase mb-0">Cart Totals</h3>
-                      <span class="text-muted">Summary</span>
-                    </div>
-                    <div class="d-flex justify-content-between mb-3">
-                      <span class="text-black">Subtotal</span>
-                      <strong class="text-black subTotal">₹&nbsp;230.00</strong>
-                    </div>
-                    <div class="d-flex justify-content-between mb-3">
-                      <span class="text-black">Discount</span>
-                      <strong class="text-black discount">₹&nbsp;10.00</strong>
-                    </div>
-                    <div class="d-flex justify-content-between mb-3">
-                      <span class="text-black">Shipping</span>
-                      <strong class="text-black">₹&nbsp;5.00</strong>
-                    </div>
-                    <div class="d-flex justify-content-between mb-4">
-                      <span class="text-black">Total</span>
-                      <strong class="text-black cart-total">₹&nbsp;225.00</strong>
-                    </div>
-                    <form action="/checkout" method="post" id="checkoutForm">
-                      <input type="hidden" id="subTotalInput" name="subTotalAmount" value="">
-                      <input type="hidden" id="discountInput" name="discount" value="">
-                      <input type="hidden" id="totalAmountInput" name="totalAmount" value="">
-                      <input type="hidden" id="quantitiesInput" name="quantities" value="">
 
-                      
-                      <button type="submit" class="btn btn-black btn-lg py-3 btn-block">Proceed To Checkout</button>
-                      
-                    </form>
+                <div class="mt-4 border-top pt-3">
+                  <h5 class="text-black h6 mb-3">Available Coupons:</h5>
+                  <div class="row g-2">
+                    <% if (locals.availableCoupons && locals.availableCoupons.length > 0) { %>
+                      <% locals.availableCoupons.forEach(coupon=> { %>
+                        <div class="col-md-4 col-sm-6">
+                          <div class="border rounded p-3 bg-white h-100 position-relative shadow-sm coupon-card"
+                            style="cursor: pointer;" onclick="selectCoupon('<%= coupon.code %>')">
+                            <strong class="text-primary d-block h5 mb-1">
+                              <%= coupon.code %>
+                            </strong>
+                            <span class="small text-muted d-block mb-1">
+                              <%= coupon.discountType==='percentage' ? coupon.discountValue + '%' : '₹' +
+                                coupon.discountValue %> Off
+                            </span>
+                            <span class="small text-muted d-block" style="font-size: 0.75rem;">
+                              Min. Cart: ₹<%= coupon.minCartValue %>
+                            </span>
+                          </div>
+                        </div>
+                        <% }) %>
+                          <% } else { %>
+                            <div class="col-12">
+                              <span class="small text-muted">No coupons available at the moment.</span>
+                            </div>
+                            <% } %>
                   </div>
                 </div>
               </div>
             </div>
-        </div>
-		
+          </div>
+          <div class="row">
+            <div class="col-12">
+              <div class="bg-light rounded border p-4">
+                <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4">
+                  <h3 class="text-black h4 text-uppercase mb-0">Cart Totals</h3>
+                  <span class="text-muted">Summary</span>
+                </div>
+                <div class="d-flex justify-content-between mb-3">
+                  <span class="text-black">Subtotal</span>
+                  <strong class="text-black subTotal">₹ 0.00</strong>
+                </div>
+                <div class="d-flex justify-content-between mb-3">
+                  <span class="text-black">Discount</span>
+                  <strong class="text-black discount">₹ 0.00</strong>
+                </div>
+                <div class="d-flex justify-content-between mb-3">
+                  <span class="text-black">Shipping</span>
+                  <strong class="text-black">Free</strong>
+                </div>
+                <div class="d-flex justify-content-between mb-4">
+                  <span class="text-black">Total</span>
+                  <strong class="text-black cart-total">₹ 0.00</strong>
+                </div>
+                <form action="/checkout" method="post" id="checkoutForm">
+                  <input type="hidden" id="subTotalInput" name="subTotalAmount" value="">
+                  <input type="hidden" id="discountInput" name="discount" value="">
+                  <input type="hidden" id="totalAmountInput" name="totalAmount" value="">
+                  <input type="hidden" id="quantitiesInput" name="quantities" value="">
+                  <input type="hidden" id="couponCodeInput" name="couponCode" value="">
 
-        <!-- Start Footer Section -->
-        <%- include('../partials/footer') %>
-        <!-- End Footer Section -->	
+                  <button type="submit" class="btn btn-black btn-lg py-3 btn-block">Proceed To Checkout</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Start Footer Section -->
+      <%- include('../partials/footer') %>
+        <!-- End Footer Section -->
 
         <script>
+          let activeCoupon = <%- locals.appliedCoupon ? JSON.stringify(locals.appliedCoupon) : 'null' %>;
 
           const cartRows = document.querySelectorAll('.cart-row');
           const cartTotal = document.querySelector('.cart-total');
@@ -166,42 +203,57 @@
               grandTotal += Number(item.innerText);
             });
 
-            document.querySelector('.subTotal').innerText = `₹ ${grandTotal}`;
-            document.querySelector('.cart-total').innerText = `₹ ${grandTotal - (grandTotal * 10 / 100)}`;
-            document.querySelector('.discount').innerText = `₹ ${grandTotal * 10 / 100}`;
+            let discount = 0;
+            const couponMsg = document.getElementById('coupon-msg');
 
+            if (activeCoupon) {
+              if (grandTotal < activeCoupon.minCartValue) {
+                couponMsg.className = "mt-2 d-block small text-danger";
+                couponMsg.innerText = `Minimum order value of ₹${activeCoupon.minCartValue} required for coupon ${activeCoupon.code}.`;
+                discount = 0;
+                document.getElementById('couponCodeInput').value = '';
+              } else {
+                couponMsg.className = "mt-2 d-block small text-success";
+                couponMsg.innerText = `Coupon ${activeCoupon.code} applied!`;
+                if (activeCoupon.discountType === 'percentage') {
+                  discount = grandTotal * (activeCoupon.discountValue / 100);
+                } else if (activeCoupon.discountType === 'flat') {
+                  discount = Math.min(activeCoupon.discountValue, grandTotal);
+                }
+                document.getElementById('couponCodeInput').value = activeCoupon.code;
+                document.getElementById('remove-coupon-btn').classList.remove('d-none');
+              }
+            } else {
+              couponMsg.innerText = '';
+              document.getElementById('couponCodeInput').value = '';
+              document.getElementById('remove-coupon-btn').classList.add('d-none');
+            }
+
+            document.querySelector('.subTotal').innerText = `₹ ${grandTotal}`;
+            document.querySelector('.discount').innerText = `₹ ${discount.toFixed(2)}`;
+            document.querySelector('.cart-total').innerText = `₹ ${(grandTotal - discount).toFixed(2)}`;
           }
 
           cartRows.forEach((row, index) => {
-
             const increaseBtn = row.querySelector('.increase');
             const decreaseBtn = row.querySelector('.decrease');
-
             const quantityInput = row.querySelector('.quantity-amount');
-
-            const price = parseFloat(
-              row.querySelector('.price').innerText
-            );
-
+            const price = parseFloat(row.querySelector('.price').innerText);
             const totalPrice = row.querySelector('.total-price');
 
-            // Update Total Function
             function updateTotal() {
               const quantity = parseInt(quantityInput.value) || 1;
-              console.log(`Row ${index}: Updating price=${price}, quantity=${quantity}, total=${price * quantity}`);
               totalPrice.innerText = price * quantity;
               updateCartTotal();
             }
 
-            // Initialize total on page load (handles back button)
             updateTotal();
 
-            // Increase Quantity
-            if(increaseBtn) {
-              increaseBtn.addEventListener('click', function(e) {
+            if (increaseBtn) {
+              increaseBtn.addEventListener('click', function (e) {
                 e.preventDefault();
                 let quantity = parseInt(quantityInput.value) || 1;
-                if(quantity < 10){
+                if (quantity < 10) {
                   quantity++;
                   quantityInput.value = quantity;
                   updateTotal();
@@ -209,9 +261,8 @@
               });
             }
 
-            // Decrease Quantity
-            if(decreaseBtn) {
-              decreaseBtn.addEventListener('click', function(e) {
+            if (decreaseBtn) {
+              decreaseBtn.addEventListener('click', function (e) {
                 e.preventDefault();
                 let quantity = parseInt(quantityInput.value) || 1;
                 if (quantity > 1) {
@@ -222,33 +273,118 @@
               });
             }
           });
+
           updateCartTotal();
 
-          document.getElementById('checkoutForm').addEventListener('submit', function(e){
-              e.preventDefault();
+          // Apply Coupon Functionality
+          document.getElementById('apply-coupon-btn').addEventListener('click', function (e) {
+            e.preventDefault();
+            const couponCode = document.getElementById('coupon').value.trim();
+            const couponMsg = document.getElementById('coupon-msg');
 
-              const subTotalText = document.querySelector('.subTotal').innerText;
-              const discountText = document.querySelector('.discount').innerText;
-              const cartTotalText = document.querySelector('.cart-total').innerText;
+            if (!couponCode) {
+              couponMsg.className = "mt-2 d-block small text-danger";
+              couponMsg.innerText = "Please enter a coupon code.";
+              return;
+            }
 
-              const subTotal = parseFloat(subTotalText.replace(/[₹\s]/g, ''));
-              const discount = parseFloat(discountText.replace(/[₹\s]/g, ''));
-              const total = parseFloat(cartTotalText.replace(/[₹\s]/g, ''));
+            // Collect all quantities
+            const quantities = {};
+            document.querySelectorAll('.quantity-amount').forEach(input => {
+              const productId = input.getAttribute('data-product-id');
+              const quantity = parseInt(input.value) || 1;
+              quantities[productId] = quantity;
+            });
 
-              // Collect all quantities
-              const quantities = {};
-              document.querySelectorAll('.quantity-amount').forEach(input => {
-                const productId = input.getAttribute('data-product-id');
-                const quantity = parseInt(input.value);
-                quantities[productId] = quantity;
+            fetch('/apply-coupon', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ couponCode, quantities })
+            })
+              .then(res => res.json())
+              .then(data => {
+                if (data.success) {
+                  activeCoupon = {
+                    code: data.couponCode,
+                    discountType: data.discountType,
+                    discountValue: data.discountValue,
+                    minCartValue: data.minCartValue
+                  };
+                  updateCartTotal();
+                  couponMsg.className = "mt-2 d-block small text-success";
+                  couponMsg.innerText = data.message;
+                  document.getElementById('remove-coupon-btn').classList.remove('d-none');
+                } else {
+                  couponMsg.className = "mt-2 d-block small text-danger";
+                  couponMsg.innerText = data.message;
+                }
+              })
+              .catch(err => {
+                console.error("Error applying coupon:", err);
+                couponMsg.className = "mt-2 d-block small text-danger";
+                couponMsg.innerText = "Error applying coupon. Please try again.";
               });
+          });
 
-              document.getElementById('subTotalInput').value = subTotal;
-              document.getElementById('discountInput').value = discount;
-              document.getElementById('totalAmountInput').value = total;
-              document.getElementById('quantitiesInput').value = JSON.stringify(quantities);
+          // Remove Coupon Functionality
+          document.getElementById('remove-coupon-btn').addEventListener('click', function (e) {
+            e.preventDefault();
+            const couponMsg = document.getElementById('coupon-msg');
 
-              this.submit();
+            fetch('/remove-coupon', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            })
+              .then(res => res.json())
+              .then(data => {
+                if (data.success) {
+                  activeCoupon = null;
+                  document.getElementById('coupon').value = '';
+                  updateCartTotal();
+                  couponMsg.className = "mt-2 d-block small text-success";
+                  couponMsg.innerText = "Coupon removed.";
+                  document.getElementById('remove-coupon-btn').classList.add('d-none');
+                }
+              })
+              .catch(err => {
+                console.error("Error removing coupon:", err);
+              });
+          });
+
+          function selectCoupon(code) {
+            document.getElementById('coupon').value = code;
+            document.getElementById('apply-coupon-btn').click();
+          }
+
+          document.getElementById('checkoutForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const subTotalText = document.querySelector('.subTotal').innerText;
+            const discountText = document.querySelector('.discount').innerText;
+            const cartTotalText = document.querySelector('.cart-total').innerText;
+
+            const subTotal = parseFloat(subTotalText.replace(/[₹\s]/g, ''));
+            const discount = parseFloat(discountText.replace(/[₹\s]/g, ''));
+            const total = parseFloat(cartTotalText.replace(/[₹\s]/g, ''));
+
+            // Collect all quantities
+            const quantities = {};
+            document.querySelectorAll('.quantity-amount').forEach(input => {
+              const productId = input.getAttribute('data-product-id');
+              const quantity = parseInt(input.value);
+              quantities[productId] = quantity;
+            });
+
+            document.getElementById('subTotalInput').value = subTotal;
+            document.getElementById('discountInput').value = discount;
+            document.getElementById('totalAmountInput').value = total;
+            document.getElementById('quantitiesInput').value = JSON.stringify(quantities);
+
+            this.submit();
           })
 
         </script>
@@ -256,4 +392,5 @@
         <script src="/js/bootstrap.bundle.min.js"></script>
         <script src="/js/tiny-slider.js"></script>
   </body>
+
 </html>

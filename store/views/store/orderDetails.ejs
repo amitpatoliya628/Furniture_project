@@ -134,18 +134,24 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-6">
-                                    <div class="mb-3">
+                                    <div class="mb-3 d-flex justify-content-between">
                                         <span class="text-black">Subtotal:</span>
-                                        <strong class="text-black">₹ <%= order.total %></strong>
+                                        <strong class="text-black">₹ <%= order.total + (order.discount || 0) %></strong>
                                     </div>
-                                    <div class="mb-3">
+                                    <% if (order.couponCode && order.discount > 0) { %>
+                                        <div class="mb-3 d-flex justify-content-between">
+                                            <span class="text-black">Coupon Applied (<%= order.couponCode %>):</span>
+                                            <strong class="text-danger">-₹ <%= order.discount %></strong>
+                                        </div>
+                                    <% } %>
+                                    <div class="mb-3 d-flex justify-content-between">
                                         <span class="text-black">Shipping:</span>
                                         <strong class="text-black">Free</strong>
                                     </div>
                                     <hr>
-                                    <div class="">
+                                    <div class="d-flex justify-content-between align-items-center">
                                         <span class="text-black"><strong>Total:</strong></span>
-                                        <strong class="text-black h5">₹ <%= order.total %></strong>
+                                        <strong class="text-black h5 mb-0">₹ <%= order.total %></strong>
                                     </div>
                                 </div>
                             </div>
